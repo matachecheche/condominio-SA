@@ -2,18 +2,21 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
+
+
+    
     public function register(): void
     {
-        //
+        // Aquí puedes registrar servicios si lo necesitas
     }
 
     /**
@@ -21,10 +24,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
-        //Schema::defaultStringLength(191);
+        // Usar Bootstrap 5 para la paginación
         Paginator::useBootstrapFive();
-        Paginator::useBootstrapFour();
-        DB::statement("SET time_zone='-04:00'");
+
+        // Configurar zona horaria SOLO si usas MySQL
+        if (config('database.default') === 'mysql') {
+            DB::statement("SET time_zone='-04:00'");
+        }
     }
 }
+

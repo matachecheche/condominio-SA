@@ -6,7 +6,7 @@
 
 
     <a class="navbar-brand" href="{{ route('panel') }}" style ="font-size: 1.2rem; font-weight: bold;"><i class="fas fa-hotel"></i>
-        Condominio Alejandria
+        Condominio San Diego
     </a>
 
     <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">

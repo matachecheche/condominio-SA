@@ -46,6 +46,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="categoria" class="form-label">Categoría (opcional)</label>
+            <input type="text" name="categoria" class="form-control" value="{{ old('categoria', $cuota->categoria) }}" placeholder="Ej: Mantenimiento, Servicios, etc.">
+        </div>
+
+        <div class="mb-3">
             <label for="observacion" class="form-label">Observación</label>
             <textarea name="observacion" class="form-control">{{ old('observacion', $cuota->observacion) }}</textarea>
         </div>

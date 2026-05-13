@@ -12,9 +12,14 @@
             <p><strong>Fecha de Emisión:</strong> {{ $cuota->fecha_emision }}</p>
             <p><strong>Fecha de Vencimiento:</strong> {{ $cuota->fecha_vencimiento }}</p>
             <p><strong>Estado:</strong> <span class="badge bg-info">{{ ucfirst($cuota->estado) }}</span></p>
-            <p><strong>Observación:</strong> {{ $cuota->observacion ?? '-' }}</p>
-            <a href="{{ route('cuotas.index') }}" class="btn btn-secondary">Volver</a>
+            @if($cuota->categoria)
+                <p><strong>Categoría:</strong> {{ $cuota->categoria }}</p>
+            @endif
+            @if($cuota->observacion)
+                <p><strong>Observación:</strong> {{ $cuota->observacion }}</p>
+            @endif
         </div>
     </div>
+    <a href="{{ route('cuotas.index') }}" class="btn btn-secondary mt-3">Volver</a>
 </div>
 @endsection

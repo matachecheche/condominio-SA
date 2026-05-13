@@ -11,7 +11,7 @@ class Cuota extends Model
 
     // app/Models/Cuota.php
     protected $fillable = [
-        'titulo', // ← ESTA LÍNEA ES CLAVE
+        'titulo',
         'descripcion',
         'fecha_emision',
         'fecha_vencimiento',
@@ -21,6 +21,7 @@ class Cuota extends Model
         'tipo_cuota_id',
         'user_id',
         'observacion',
+        'categoria', // ← NUEVO ATRIBUTO
     ];
 
     public function residente()
@@ -32,6 +33,7 @@ class Cuota extends Model
     {
         return $this->hasMany(Pago::class);
     }
+
     public function tipoCuota()
     {
         return $this->belongsTo(TipoCuota::class);

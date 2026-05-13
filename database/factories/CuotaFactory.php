@@ -27,6 +27,7 @@ class CuotaFactory extends Factory
             'tipo_cuota_id' => TipoCuota::inRandomOrder()->first()?->id,
             'user_id' => User::inRandomOrder()->first()?->id,
             'observacion' => $this->faker->optional()->sentence(),
+            'categoria' => $this->faker->optional()->randomElement(['Mantenimiento', 'Servicios', 'Reparación', 'Limpieza', 'Vigilancia']),
         ];
     }
 }

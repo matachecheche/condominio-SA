@@ -84,6 +84,10 @@
             </select>
         </div>
 
+        <div class="mb-3">
+            <label for="categoria" class="form-label">Categoría (opcional)</label>
+            <input type="text" name="categoria" class="form-control" value="{{ old('categoria') }}" placeholder="Ej: Mantenimiento, Servicios, etc.">
+        </div>
 
         <div class="mb-3">
             <label class="form-label">Emitir cuota a:</label>
@@ -129,9 +133,9 @@
         </div>
 
         <div class="mb-3">
-    <label for="observacion" class="form-label">Observación (opcional)</label>
-    <textarea name="observacion" class="form-control" rows="2">{{ old('observacion') }}</textarea>
-</div>
+            <label for="observacion" class="form-label">Observación (opcional)</label>
+            <textarea name="observacion" class="form-control" rows="2">{{ old('observacion') }}</textarea>
+        </div>
 
         <button type="submit" class="btn btn-success">Guardar Cuota</button>
         <a href="{{ route('cuotas.index') }}" class="btn btn-secondary">Cancelar</a>

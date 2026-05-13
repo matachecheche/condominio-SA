@@ -91,6 +91,7 @@ class CuotaController extends Controller
             'tipo_cuota_id' => 'required|exists:tipos_cuotas,id',
             'estado' => 'required|in:pendiente,activa,cancelada',
             'observacion' => 'nullable|string',
+            'categoria' => 'nullable|string|max:255', // ← NUEVA VALIDACIÓN
         ]);
 
         $destino = $request->destino;
@@ -118,6 +119,7 @@ class CuotaController extends Controller
                 'tipo_cuota_id' => $request->tipo_cuota_id,
                 'user_id' => auth()->id(),
                 'observacion' => $request->observacion,
+                'categoria' => $request->categoria, // ← NUEVO ATRIBUTO
             ]);
         }
 
@@ -139,6 +141,7 @@ class CuotaController extends Controller
             'monto' => 'required|numeric',
             'estado' => 'required|in:pendiente,activa,cancelada,pagado',
             'observacion' => 'nullable|string',
+            'categoria' => 'nullable|string|max:255', // ← NUEVA VALIDACIÓN
         ]);
 
         $cuota->update($request->only([
@@ -148,7 +151,8 @@ class CuotaController extends Controller
             'fecha_vencimiento',
             'monto',
             'estado',
-            'observacion'
+            'observacion',
+            'categoria', // ← NUEVO ATRIBUTO
         ]));
         
         return redirect()->route('cuotas.index')->with('success', 'Cuota actualizada correctamente.');

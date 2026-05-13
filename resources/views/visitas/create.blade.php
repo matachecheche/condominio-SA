@@ -166,6 +166,42 @@
                             @enderror
                         </div>
 
+                        {{-- ✅ NUEVO CAMPO: ACOMPAÑANTE --}}
+                        {{-- EXPLICACIÓN: Pregunta si el visitante va acompañado --}}
+                        <div class="mb-3">
+                            <label for="acompanante" class="form-label">
+                                <i class="fas fa-users"></i> ¿El visitante va acompañado?
+                            </label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       name="acompanante" 
+                                       id="acompanante" 
+                                       value="1"
+                                       {{ old('acompanante') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="acompanante">
+                                    {{-- Mostrar estado dinámicamente --}}
+                                    <span id="estadoAcompanante">
+                                        @if(old('acompanante'))
+                                            ✅ SÍ, va acompañado
+                                        @else
+                                            ❌ No, va solo
+                                        @endif
+                                    </span>
+                                </label>
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Indica si el visitante vendrá acompañado de otras personas
+                            </small>
+                            @error('acompanante')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+
+
+
                         <div class="row">
                             <div class="col-md-6">
                                 {{-- Fecha y Hora de Inicio --}}
@@ -346,6 +382,13 @@
                 return false;
             }
         }
+    });
+</script>
+<script>
+    // Script para actualizar el texto del acompañante dinámicamente
+    document.getElementById('acompanante').addEventListener('change', function() {
+        const estado = this.checked ? '✅ SÍ, va acompañado' : '❌ No, va solo';
+        document.getElementById('estadoAcompanante').textContent = estado;
     });
 </script>
 @endsection

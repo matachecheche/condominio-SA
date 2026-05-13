@@ -7,6 +7,7 @@
 @endpush
 
 @section('content')
+{{-- EXPLICACIÓN: Mostrar mensaje de éxito si se guardó correctamente --}}
 @if (session('success'))
     <script>
         let message = "{{ session('success') }}"
@@ -35,23 +36,32 @@
         <li class="breadcrumb-item active">Empresas</li>
     </ol>
 
+    {{-- BOTÓN: Registrar nueva empresa --}}
     @can('crear empresas')
     <div class="mb-4">
-        <a href="{{ route('empresas.create') }}"><button type="button" class="btn btn-primary btn-sm">Registrar Nueva Empresa</button></a>
+        <a href="{{ route('empresas.create') }}">
+            <button type="button" class="btn btn-primary btn-sm">Registrar Nueva Empresa</button>
+        </a>
     </div>
     @endcan
 
+    {{-- TARJETA: Tabla de empresas --}}
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
             Tabla de Empresas Externas
         </div>
         <div class="card-body table-responsive">
+            {{-- FORMULARIO: Filtros de búsqueda --}}
             <form method="GET" action="{{ route('empresas.index') }}" class="mb-3">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-6">
                         <label class="form-label">Buscar por nombre o servicio</label>
-                        <input type="text" name="search" class="form-control" placeholder="Ej: Jardinería, Seguridad" value="{{ request('search') }}">
+                        <input type="text" 
+                               name="search" 
+                               class="form-control" 
+                               placeholder="Ej: Jardinería, Seguridad" 
+                               value="{{ request('search') }}">
                     </div>
                     <div class="col-md-2 d-grid">
                         <button class="btn btn-outline-primary" type="submit">Filtrar</button>
@@ -59,6 +69,7 @@
                 </div>
             </form>
 
+            {{-- TABLA: Listado de empresas --}}
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
@@ -67,10 +78,12 @@
                         <th>Servicio</th>
                         <th>Teléfono</th>
                         <th>Correo</th>
+                        <th>Calificación</th> {{-- ✅ NUEVA COLUMNA --}}
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {{-- EXPLICACIÓN: Itera sobre cada empresa para mostrar sus datos en una fila --}}
                     @foreach($empresas as $empresa)
                     <tr>
                         <td>{{ $empresa->id }}</td>
@@ -78,6 +91,24 @@
                         <td>{{ $empresa->servicio }}</td>
                         <td>{{ $empresa->telefono }}</td>
                         <td>{{ $empresa->correo }}</td>
+                        
+                        {{-- ✅ NUEVA CELDA: Mostrar calificación con estrellas y color --}}
+                        {{-- EXPLICACIÓN: Muestra la calificación con estrellas y un badge de color según el nivel --}}
+                        <td>
+                            <span title="Calificación: {{ $empresa->calificacion }}/5">
+                                {!! str_repeat('⭐', $empresa->calificacion) !!}
+                            </span>
+                            <span class="badge 
+                                @if($empresa->calificacion >= 5) bg-success
+                                @elseif($empresa->calificacion >= 4) bg-info
+                                @elseif($empresa->calificacion >= 3) bg-warning text-dark
+                                @else bg-danger
+                                @endif">
+                                {{ $empresa->calificacion }}/5
+                            </span>
+                        </td>
+                        
+                        {{-- Botones de acciones --}}
                         <td>
                             <div class="btn-group" role="group">
                                 @can('ver empresas')
@@ -87,23 +118,31 @@
                                 <a href="{{ route('empresas.edit', $empresa->id) }}" class="btn btn-warning btn-sm">Editar</a>
                                 @endcan
                                 @can('eliminar empresas')
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminarEmpresa-{{ $empresa->id }}">Eliminar</button>
+                                <button type="button" 
+                                        class="btn btn-danger btn-sm" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#confirmarEliminar-{{ $empresa->id }}">
+                                    Eliminar
+                                </button>
                                 @endcan
                             </div>
                         </td>
                     </tr>
 
-                    @can('eliminar empresas')
-                    <!-- Modal -->
-                    <div class="modal fade" id="confirmarEliminarEmpresa-{{ $empresa->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmarEliminarEmpresaLabel" aria-hidden="true">
+                    {{-- MODAL: Confirmación de eliminación --}}
+                    <div class="modal fade" 
+                         id="confirmarEliminar-{{ $empresa->id }}" 
+                         data-bs-backdrop="static" 
+                         data-bs-keyboard="false" 
+                         tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Eliminar Empresa</h5>
+                                    <h5 class="modal-title">Eliminar empresa</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    ¿Desea eliminar la empresa: {{ $empresa->nombre }}?
+                                    ¿Desea eliminar la empresa <strong>{{ $empresa->nombre }}</strong>?
                                 </div>
                                 <div class="modal-footer">
                                     <form action="{{ route('empresas.destroy', $empresa->id) }}" method="POST">
@@ -116,15 +155,15 @@
                             </div>
                         </div>
                     </div>
-                    @endcan
                     @endforeach
                 </tbody>
             </table>
-
-            <div class="d-flex justify-content-center mt-3">
-                {{ $empresas->appends(request()->query())->links() }}
-            </div>
         </div>
+    </div>
+
+    {{-- PAGINACIÓN --}}
+    <div class="d-flex justify-content-center">
+        {{ $empresas->links() }}
     </div>
 </div>
 @endsection

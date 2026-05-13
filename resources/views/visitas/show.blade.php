@@ -120,6 +120,42 @@
                             </div>
                         </div>
 
+                        {{-- ✅ NUEVA INFORMACIÓN: Acompañante --}}
+                        {{-- EXPLICACIÓN: Muestra si el visitante va acompañado --}}
+                        <div class="col-md-6">
+                            <div class="card bg-light h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-users"></i> Información Adicional
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-0">
+                                        <label class="form-label fw-bold">
+                                            <i class="fas fa-users text-primary"></i> ¿Va Acompañado?:
+                                        </label>
+                                        <div>
+                                            @if($visita->acompanante)
+                                                <span class="badge bg-success fs-6">
+                                                    <i class="fas fa-check-circle"></i> SÍ, va acompañado
+                                                </span>
+                                                <small class="d-block mt-2 text-muted">
+                                                    El visitante llegará con personas adicionales
+                                                </small>
+                                            @else
+                                                <span class="badge bg-secondary fs-6">
+                                                    <i class="fas fa-times-circle"></i> No, va solo
+                                                </span>
+                                                <small class="d-block mt-2 text-muted">
+                                                    El visitante vendrá sin acompañantes
+                                                </small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- Información de la Visita --}}
                         <div class="col-md-6">
                             <div class="card bg-light h-100">

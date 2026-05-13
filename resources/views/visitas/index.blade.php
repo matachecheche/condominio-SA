@@ -110,6 +110,20 @@
                     @endcanany
                     
                     <td>{{ Str::limit($visita->motivo, 30) }}</td>
+
+                    {{-- ✅ NUEVA CELDA: Mostrar acompañante --}}
+                    {{-- EXPLICACIÓN: Muestra si el visitante va acompañado con un icono --}}
+                    <td>
+                        @if($visita->acompanante)
+                            <span class="badge bg-success">
+                                <i class="fas fa-check-circle"></i> Sí
+                            </span>
+                        @else
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-times-circle"></i> No
+                            </span>
+                        @endif
+                    </td>
                     <td>
                         @switch($visita->estado)
                             @case('pendiente')

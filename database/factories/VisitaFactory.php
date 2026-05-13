@@ -8,10 +8,28 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 
+/**
+ * VisitaFactory
+ * 
+ * EXPLICACIÓN GENERAL:
+ * Una Factory genera datos fake (falsos) para testing
+ * Se usa cuando necesitas crear múltiples registros para pruebas
+ * 
+ * Ejemplo de uso:
+ * Visita::factory()->count(10)->create()  // Crea 10 visitas
+ * Visita::factory()->create()             // Crea 1 visita
+ */
 class VisitaFactory extends Factory
 {
     protected $model = Visita::class;
 
+    /**
+     * definition()
+     * 
+     * EXPLICACIÓN:
+     * Define la estructura de datos falsos que genera el Factory
+     * $this->faker genera datos aleatorios pero realistas
+     */
     public function definition(): array
     {
         $fechaInicio = $this->faker->dateTimeBetween('-1 week', '+1 week');
@@ -32,6 +50,11 @@ class VisitaFactory extends Factory
                 'Servicio de limpieza',
                 'Reparación'
             ]),
+            
+            // ✅ NUEVO CAMPO: Generar acompañante aleatorio
+            // 60% sin acompañante, 40% con acompañante
+            'acompanante' => $this->faker->boolean(40),
+            
             'fecha_inicio' => $fechaInicio,
             'fecha_fin' => $fechaFin,
             'codigo' => $this->faker->unique()->numerify('######'),
@@ -40,7 +63,9 @@ class VisitaFactory extends Factory
         ];
     }
 
-    // Estado específicos
+    /**
+     * Estados específicos - No necesitan cambios
+     */
     public function pendiente(): static
     {
         return $this->state(fn (array $attributes) => [

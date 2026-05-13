@@ -39,6 +39,12 @@
                    value="{{ old('monto', $areaComun->monto) }}">
         </div>
 
+        <!-- NUEVO CAMPO -->
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe el área común...">{{ old('descripcion', $areaComun->descripcion) }}</textarea>
+        </div>
+
         <div class="mb-3">
             <label for="estado" class="form-label">Estado</label>
             <select name="estado" class="form-select" required>

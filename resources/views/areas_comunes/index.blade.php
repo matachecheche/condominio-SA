@@ -43,6 +43,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Descripción</th> <!-- NUEVA COLUMNA -->
                     <th>Monto/Hora (Bs.)</th>
                     <th>Estado</th>
                     <th>Acciones</th>
@@ -53,6 +54,7 @@
                 <tr>
                     <td>{{ $area->id }}</td>
                     <td>{{ $area->nombre }}</td>
+                    <td>{{ Str::limit($area->descripcion, 50) ?? 'N/A' }}</td> <!-- MOSTRAR DESCRIPCIÓN -->
                     <td>{{ number_format($area->monto, 2) }}</td>
                     <td>
                         <span class="badge

@@ -9,6 +9,7 @@ use App\Traits\BitacoraTrait;
 class AreaComunController extends Controller
 {
     use BitacoraTrait;
+    
     /**
      * Display a listing of the resource.
      */
@@ -32,11 +33,12 @@ class AreaComunController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:50',
-            'monto'  => 'required|numeric|min:0',
+            'nombre'      => 'required|string|max:50',
+            'monto'       => 'required|numeric|min:0',
+            'descripcion' => 'nullable|string|max:1000', // ← VALIDACIÓN NUEVA
         ]);
 
-        $areaComun=AreaComun::create($request->only('nombre','monto'));
+        $areaComun = AreaComun::create($request->only('nombre', 'monto', 'descripcion')); // ← INCLUIR DESCRIPCIÓN
 
         $this->registrarEnBitacora('Usuario Registro un Area Comun', $areaComun->id);
 
@@ -66,9 +68,10 @@ class AreaComunController extends Controller
     public function update(Request $request, AreaComun $areaComun)
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:50',
-            'monto'  => 'required|numeric|min:0',
-            'estado' => 'required|in:activo,inactivo,mantenimiento',
+            'nombre'      => 'required|string|max:50',
+            'monto'       => 'required|numeric|min:0',
+            'descripcion' => 'nullable|string|max:1000', // ← VALIDACIÓN NUEVA
+            'estado'      => 'required|in:activo,inactivo,mantenimiento',
         ]);
 
         $this->registrarEnBitacora('Usuario Actualizo un Area Comun', $areaComun->id);
@@ -76,7 +79,7 @@ class AreaComunController extends Controller
         $areaComun->update($validated);
         return redirect()->route('areas-comunes.index')
                         ->with('success', 'Área Común actualizada correctamente.');
-        }
+    }
 
     /**
      * Remove the specified resource from storage.

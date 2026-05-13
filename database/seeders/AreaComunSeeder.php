@@ -15,22 +15,25 @@ class AreaComunSeeder extends Seeder
     {
         $areas = [
             [
-                'nombre' => 'Salón de Eventos',
-                'monto'  => 250.00,        // tarifa por reserva
-                'estado' => 'activo',
+                'nombre'      => 'Salón de Eventos',
+                'monto'       => 250.00,
+                'descripcion' => 'Salón equipado con mesas, sillas y proyector para eventos sociales.', // ← NUEVO
+                'estado'      => 'activo',
             ],
             [
-                'nombre' => 'Piscina',
-                'monto'  => 150.00,
-                'estado' => 'activo',
+                'nombre'      => 'Piscina',
+                'monto'       => 150.00,
+                'descripcion' => 'Piscina olímpica con áreas de recreación infantil y adulto.', // ← NUEVO
+                'estado'      => 'activo',
             ],
         ];
 
         foreach($areas as $area) {
             AreaComun::create([
-                'nombre' => $area['nombre'],
-                'monto'  => $area['monto'],
-                'estado' => $area['estado'],
+                'nombre'      => $area['nombre'],
+                'monto'       => $area['monto'],
+                'descripcion' => $area['descripcion'], // ← NUEVO
+                'estado'      => $area['estado'],
             ]);
         }
     }

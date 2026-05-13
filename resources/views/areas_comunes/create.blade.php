@@ -28,6 +28,12 @@
             <input type="number" step="0.01" name="monto" class="form-control" required value="{{ old('monto') }}">
         </div>
 
+        <!-- NUEVO CAMPO -->
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="4" placeholder="Describe el área común...">{{ old('descripcion') }}</textarea>
+        </div>
+
         <button type="submit" class="btn btn-success">Guardar Área Común</button>
         <a href="{{ route('areas-comunes.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>

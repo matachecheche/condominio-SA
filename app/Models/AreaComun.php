@@ -13,6 +13,7 @@ class AreaComun extends Model
     protected $fillable = [
         'nombre',
         'monto',
+        'descripcion', // ← NUEVO ATRIBUTO
         'estado'
     ];
 
@@ -20,9 +21,9 @@ class AreaComun extends Model
     {
         return $this->hasMany(Reserva::class, 'area_comun_id');
     }
+    
     public function inventarios()
-{
-    return $this->hasMany(Inventario::class);
-}
-
+    {
+        return $this->hasMany(Inventario::class);
+    }
 }

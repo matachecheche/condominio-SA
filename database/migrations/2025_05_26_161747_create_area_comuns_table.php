@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre', 50);
             $table->decimal('monto',10,2);
+            $table->text('descripcion')->nullable(); // ← NUEVO ATRIBUTO
             $table->enum('estado', ['activo', 'inactivo', 'mantenimiento'])->default('activo');
             $table->timestamps();
         });

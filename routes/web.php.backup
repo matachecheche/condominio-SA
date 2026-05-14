@@ -1,5 +1,4 @@
 <?php
-use App\Http\Controllers\PropiedadController;
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
@@ -127,5 +126,3 @@ Route::post('/bitacora/page-close', function () {
     }
     return response()->noContent();
 })->middleware('web')->name('bitacora.page-close');
-// -- CU21 — Gestión de Propiedades
-Route::resource('propiedades', PropiedadController::class);

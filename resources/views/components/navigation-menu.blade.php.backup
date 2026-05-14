@@ -39,11 +39,6 @@
                 <div class="sb-sidenav-menu-heading text-uppercase small mt-3"
                      style="color:#34d399; font-size:0.67rem; letter-spacing:0.05em; padding:0.5rem 1rem 0.25rem;">
                     📦 Paquete 2 — Personas y Estructura
-
-<a class="nav-link d-flex align-items-center gap-2" href="{{ route('propiedades.index') }}">
-    <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-    <span>CU21 · Gestión de Propiedades</span>
-</a>
                 </div>
 
                 <a class="nav-link collapsed d-flex align-items-center gap-2" href="#"
@@ -75,11 +70,6 @@
                     <small class="ms-auto" style="font-size:0.62rem; color:#334155;">Ciclo 3</small>
                 </span>
 
-
-<a class="nav-link d-flex align-items-center gap-2" href="{{ route('propiedades.index') }}">
-    <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-    <span>CU21 · Gestión de Propiedades</span>
-</a>
                 {{-- PAQUETE 3 — CU7, CU8, CU9, CU10, CU15, CU16, CU17 --}}
                 <div class="sb-sidenav-menu-heading text-uppercase small mt-3"
                      style="color:#fb923c; font-size:0.67rem; letter-spacing:0.05em; padding:0.5rem 1rem 0.25rem;">

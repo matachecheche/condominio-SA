@@ -1,5 +1,4 @@
 <?php
-use App\Http\Controllers\PropiedadController;
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
@@ -149,6 +148,3 @@ use App\Http\Controllers\IncidenciaController;
 Route::middleware(['auth'])->group(function () {
     Route::resource('incidencias', IncidenciaController::class);
 });
-
-// -- CU21 — Gestión de Propiedades
-Route::resource('propiedades', PropiedadController::class);

@@ -92,6 +92,22 @@ class PermissionSeeder extends Seeder
 
             // Bitácora
             'ver bitacora',
+            // Informes (CU12, CU14)
+            'ver informes',
+            'exportar informes',
+            'ver reportes de pagos',
+
+            // Unidades (CU13)
+            'ver unidades',
+            'crear unidades',
+            'editar unidades',
+            'eliminar unidades',
+
+            // Incidencias (CU16)
+            'ver incidencias',
+            'crear incidencias',
+            'editar incidencias',
+            'eliminar incidencias',
         ];
 
         foreach ($permisos as $permiso) {

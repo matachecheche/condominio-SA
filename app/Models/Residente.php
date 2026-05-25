@@ -16,6 +16,11 @@ class Residente extends Model
         'tipo_residente'
     ];
 
+    public function cuotas()
+    {
+        return $this->hasMany(\App\Models\Cuota::class);
+    }
+
     public function getNombreCompletoAttribute()
     {
         return $this->nombre . ' ' . $this->apellido;
@@ -24,6 +29,11 @@ class Residente extends Model
     public function multas()
     {
         return $this->hasMany(Multa::class);
+    }
+
+    public function unidades()
+    {
+        return $this->hasMany(Unidad::class);
     }
 
     public function reclamos()

@@ -126,3 +126,25 @@ Route::post('/bitacora/page-close', function () {
     }
     return response()->noContent();
 })->middleware('web')->name('bitacora.page-close');
+// ── CICLO 3 ───────────────────────────────────────────────────────────────────
+
+// ── CU13 — Unidades Habitacionales (vincular residente con unidad) ────────────
+use App\Http\Controllers\UnidadController;
+Route::middleware(['auth'])->group(function () {
+    Route::resource('unidades', UnidadController::class);
+});
+
+// ── CU12 + CU14 — Informes administrativos y reportes de pagos ───────────────
+use App\Http\Controllers\InformeController;
+Route::middleware(['auth'])->group(function () {
+    Route::get('/informes/administrativo', [InformeController::class, 'administrativo'])
+         ->name('informes.administrativo');
+    Route::get('/informes/pagos', [InformeController::class, 'pagos'])
+         ->name('informes.pagos');
+});
+
+// ── CU16 — Incidencias y denuncias ────────────────────────────────────────────
+use App\Http\Controllers\IncidenciaController;
+Route::middleware(['auth'])->group(function () {
+    Route::resource('incidencias', IncidenciaController::class);
+});

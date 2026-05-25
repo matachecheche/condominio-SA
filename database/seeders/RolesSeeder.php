@@ -24,6 +24,8 @@ class RolesSeeder extends Seeder
             'ver documentos',
             'ver foro',
             'ver calificaciones',
+            'ver incidencias',
+            'crear incidencias',
         ]);
 
         // Rol Portero

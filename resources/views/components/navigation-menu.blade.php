@@ -64,11 +64,10 @@
                     <span>CU6 · Residentes</span>
                 </a>
 
-                <span class="nav-link d-flex align-items-center gap-2" style="color:#334155; cursor:default;">
-                    <div class="sb-nav-link-icon"><i class="fas fa-link"></i></div>
-                    <span>CU13 · Vincular residente-unidad</span>
-                    <small class="ms-auto" style="font-size:0.62rem; color:#334155;">Ciclo 3</small>
-                </span>
+                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('unidades.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                    <span>CU13 · Vincular Residente-Unidad</span>
+                </a>
 
                 {{-- PAQUETE 3 — CU7, CU8, CU9, CU10, CU15, CU16, CU17 --}}
                 <div class="sb-sidenav-menu-heading text-uppercase small mt-3"
@@ -162,11 +161,10 @@
                     <span>CU15 · Empresas Externas</span>
                 </a>
 
-                <span class="nav-link d-flex align-items-center gap-2" style="color:#334155; cursor:default;">
+                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('incidencias.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-flag"></i></div>
-                    <span>CU16 · Denuncias e incidencias</span>
-                    <small class="ms-auto" style="font-size:0.62rem; color:#334155;">Ciclo 3</small>
-                </span>
+                    <span>CU16 · Incidencias y Denuncias</span>
+                </a>
 
                 <span class="nav-link d-flex align-items-center gap-2" style="color:#334155; cursor:default;">
                     <div class="sb-nav-link-icon"><i class="fas fa-bell"></i></div>
@@ -185,17 +183,15 @@
                     <span>CU11 · Comunicados internos</span>
                 </a>
 
-                <span class="nav-link d-flex align-items-center gap-2" style="color:#334155; cursor:default;">
+                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('informes.administrativo') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
-                    <span>CU12 · Informes administrativos</span>
-                    <small class="ms-auto" style="font-size:0.62rem; color:#334155;">Ciclo 3</small>
-                </span>
+                    <span>CU12 · Informes Administrativos</span>
+                </a>
 
-                <span class="nav-link d-flex align-items-center gap-2" style="color:#334155; cursor:default;">
+                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('informes.pagos') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-receipt"></i></div>
-                    <span>CU14 · Reportes de pago</span>
-                    <small class="ms-auto" style="font-size:0.62rem; color:#334155;">Ciclo 3</small>
-                </span>
+                    <span>CU14 · Reportes de Pagos</span>
+                </a>
 
                 <span class="nav-link d-flex align-items-center gap-2" style="color:#334155; cursor:default;">
                     <div class="sb-nav-link-icon"><i class="fas fa-exclamation-circle"></i></div>

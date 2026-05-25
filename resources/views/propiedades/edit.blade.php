@@ -1,4 +1,4 @@
-@extends('layouts.ap')
+@extends('plantilla')
 
 @section('content')
 <div class="container py-4">

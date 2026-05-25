@@ -1,6 +1,6 @@
 <?php
-
 use App\Http\Controllers\PropiedadController;
+
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogoutController;
@@ -24,9 +24,6 @@ use App\Http\Controllers\AreaComunController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\VisitaController;
 use App\Http\Controllers\ComunicadoController;
-use App\Http\Controllers\UnidadController;
-use App\Http\Controllers\InformeController;
-use App\Http\Controllers\IncidenciaController;
 use App\Models\Bitacora;
 
 // ── Recuperación de contraseña ────────────────────────────────────────────────
@@ -49,14 +46,14 @@ Route::prefix('empleados/cargo')->group(function () {
 Route::get('/', [HomeController::class, 'index'])->name('panel');
 Route::get('/panel', [HomeController::class, 'index']);
 
-// ── CICLO 1 — Acceso y Seguridad ─────────────────────────────────────────────
+// ── CRUD básicos del ciclo 1 ──────────────────────────────────────────────────
 Route::resource('bitacora', BitacoraController::class);
 Route::resource('roles', RoleController::class)->middleware('auth');
 Route::resources([
     'users'      => UsuarioController::class,
     'residentes' => ResidenteController::class,
 ]);
-Route::resource('empleados', EmpleadoController::class);
+Route::resource('empleados', App\Http\Controllers\EmpleadoController::class);
 
 // ── Autenticación ─────────────────────────────────────────────────────────────
 Route::get('/login', [LoginController::class, 'index'])->name('login');
@@ -98,8 +95,9 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/api/horas-libres', [ReservaController::class, 'horasLibres']);
 
-// ── CU9 — Mantenimientos ─────────────────────────────────────────────────────
-Route::resource('mantenimientos', MantenimientoController::class);
+// ── CU9 — Mantenimientos y Empresas externas ─────────────────────────────────
+Route::resource('mantenimientos', App\Http\Controllers\MantenimientoController::class);
+Route::resource('empresas', EmpresaExternaController::class);
 
 // ── CU10 — Visitas ────────────────────────────────────────────────────────────
 Route::middleware(['auth'])->group(function () {
@@ -115,31 +113,8 @@ Route::middleware(['auth'])->group(function () {
 // ── CU11 — Comunicados ────────────────────────────────────────────────────────
 Route::resource('comunicados', ComunicadoController::class);
 
-// ── CU13 — Unidades Habitacionales (vincular residente con unidad) ────────────
-Route::middleware(['auth'])->group(function () {
-    Route::resource('unidades', UnidadController::class);
-});
-
-// ── CU12 + CU14 — Informes administrativos y reportes de pagos ───────────────
-Route::middleware(['auth'])->group(function () {
-    Route::get('/informes/administrativo', [InformeController::class, 'administrativo'])
-         ->name('informes.administrativo');
-    Route::get('/informes/pagos', [InformeController::class, 'pagos'])
-         ->name('informes.pagos');
-});
-
-// ── CU15 — Empresas Externas (contratación) ───────────────────────────────────
-Route::resource('empresas', EmpresaExternaController::class);
-
-// ── CU16 — Incidencias y denuncias ────────────────────────────────────────────
-Route::middleware(['auth'])->group(function () {
-    Route::resource('incidencias', IncidenciaController::class);
-});
-
-// ── CU20 — Gestión de Propiedades ────────────────────────────────────────────
-Route::resource('propiedades', PropiedadController::class);
-
-// ── Bitácora: cierre de página ────────────────────────────────────────────────
+// ── Bitácora: cierre de página (beforeunload vía sendBeacon) ──────────────────
+// Esta ruta recibe un POST silencioso desde el JS cuando el usuario cierra/abandona la página.
 Route::post('/bitacora/page-close', function () {
     if (Auth::check()) {
         Bitacora::create([
@@ -152,3 +127,28 @@ Route::post('/bitacora/page-close', function () {
     }
     return response()->noContent();
 })->middleware('web')->name('bitacora.page-close');
+// ── CICLO 3 ───────────────────────────────────────────────────────────────────
+
+// ── CU13 — Unidades Habitacionales (vincular residente con unidad) ────────────
+use App\Http\Controllers\UnidadController;
+Route::middleware(['auth'])->group(function () {
+    Route::resource('unidades', UnidadController::class);
+});
+
+// ── CU12 + CU14 — Informes administrativos y reportes de pagos ───────────────
+use App\Http\Controllers\InformeController;
+Route::middleware(['auth'])->group(function () {
+    Route::get('/informes/administrativo', [InformeController::class, 'administrativo'])
+         ->name('informes.administrativo');
+    Route::get('/informes/pagos', [InformeController::class, 'pagos'])
+         ->name('informes.pagos');
+});
+
+// ── CU16 — Incidencias y denuncias ────────────────────────────────────────────
+use App\Http\Controllers\IncidenciaController;
+Route::middleware(['auth'])->group(function () {
+    Route::resource('incidencias', IncidenciaController::class);
+});
+
+// -- CU21 — Gestión de Propiedades
+Route::resource('propiedades', PropiedadController::class);

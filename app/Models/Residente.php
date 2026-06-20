@@ -40,4 +40,18 @@ class Residente extends Model
     {
         return $this->hasMany(Reclamo::class);
     }
+    /**
+     * Indica si el residente tiene al menos una cuota vencida y no pagada.
+     * Se utiliza para restringir el acceso a servicios como reservas de
+     * áreas comunes mientras exista morosidad (ver caso Reserva-002).
+     *
+     * @return bool
+     */
+    public function tieneMorosidad(): bool
+    {
+        return $this->cuotas()
+            ->where('estado', '!=', 'pagado')
+            ->whereDate('fecha_vencimiento', '<', now()->toDateString())
+            ->exists();
+    }
 }

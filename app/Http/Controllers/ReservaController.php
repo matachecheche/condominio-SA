@@ -84,6 +84,15 @@ class ReservaController extends Controller
             ])->withInput();
         }
 
+        // Bloquear la reserva si el residente tiene cuotas vencidas sin pagar
+        // (CU8 - caso de prueba Reserva-002: Validación de Morosidad).
+        $residenteSolicitante = \App\Models\Residente::find($user->residente_id);
+        if ($residenteSolicitante && $residenteSolicitante->tieneMorosidad()) {
+            return back()->withErrors([
+                'morosidad' => 'No es posible registrar la reserva: el residente tiene cuotas vencidas pendientes de pago.',
+            ])->withInput();
+        }
+
         // Crear reserva
         $reserva = Reserva::create([
             'area_comun_id' => $request->area_comun_id,

@@ -355,6 +355,10 @@ class PagoController extends Controller
             'user_id' => auth()->id(),
         ]);
 
+        // Si el pago se realizó después del vencimiento, se aplica la multa
+        // automática por mora (CU7 - caso de prueba Pago-001).
+        $multaGenerada = $cuota->aplicarMultaSiCorresponde($request->fecha_pago);
+
         // Si el pago cubre el monto total de la cuota, actualizar el estado
         if ($request->monto_pagado >= $cuota->monto) {
             $cuota->estado = 'pagado';
@@ -362,6 +366,11 @@ class PagoController extends Controller
         }
         $this->registrarEnBitacora('Pago registrado', $pago->id);
 
-        return redirect()->route('pagos.index')->with('success', 'Pago registrado exitosamente.');
+        $mensaje = 'Pago registrado exitosamente.';
+        if ($multaGenerada) {
+            $mensaje .= ' Se aplicó una multa por mora de Bs. ' . number_format($multaGenerada->monto, 2) . '.';
+        }
+
+        return redirect()->route('pagos.index')->with('success', $mensaje);
     }
 }

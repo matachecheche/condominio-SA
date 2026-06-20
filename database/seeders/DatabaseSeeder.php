@@ -28,6 +28,9 @@ class DatabaseSeeder extends Seeder
             ReservaSeeder::class,
             MultaSeeder::class,
             ComunicadoSeeder::class,
+            ReclamoSeeder::class,
+            EventoSeeder::class,
+            NotificacionCicloSeeder::class,
         ]);
     }
 }

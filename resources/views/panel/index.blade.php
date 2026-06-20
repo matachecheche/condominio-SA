@@ -245,12 +245,11 @@
                             <i class="fas fa-flag" style="color:#fb923c;width:16px;text-align:center;"></i>
                             Gestionar denuncias / incidencias
                         </a>
-                        <span class="cu-item disabled">
-                            <span class="cu-badge badge-pending">CU17</span>
-                            <i class="fas fa-bell" style="width:16px;text-align:center;"></i>
+                        <a href="{{ route('notificaciones.index') }}" class="cu-item">
+                            <span class="cu-badge badge-done">CU17</span>
+                            <i class="fas fa-bell" style="color:#fb923c;width:16px;text-align:center;"></i>
                             Enviar notificaciones a residentes
-                            <span class="ciclo-tag">Pendiente</span>
-                        </span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -289,18 +288,16 @@
                         </a>
                     </div>
                     <div class="col-md-6">
-                        <span class="cu-item disabled">
-                            <span class="cu-badge badge-pending">CU18</span>
-                            <i class="fas fa-exclamation-circle" style="width:16px;text-align:center;"></i>
+                        <a href="{{ route('reclamos.index') }}" class="cu-item">
+                            <span class="cu-badge badge-done">CU18</span>
+                            <i class="fas fa-exclamation-circle" style="color:#a78bfa;width:16px;text-align:center;"></i>
                             Gestionar reclamos administrativos
-                            <span class="ciclo-tag">Pendiente</span>
-                        </span>
-                        <span class="cu-item disabled">
-                            <span class="cu-badge badge-pending">CU19</span>
-                            <i class="fas fa-calendar-star" style="width:16px;text-align:center;"></i>
+                        </a>
+                        <a href="{{ route('eventos.index') }}" class="cu-item">
+                            <span class="cu-badge badge-done">CU19</span>
+                            <i class="fas fa-calendar-star" style="color:#a78bfa;width:16px;text-align:center;"></i>
                             Gestionar eventos comunitarios
-                            <span class="ciclo-tag">Pendiente</span>
-                        </span>
+                        </a>
                     </div>
                 </div>
             </div>

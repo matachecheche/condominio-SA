@@ -182,11 +182,10 @@
                     <span>CU16 · Denuncias / Incidencias</span>
                 </a>
 
-                <span class="nav-link d-flex align-items-center gap-2" style="color:#334155;cursor:default;">
-                    <div class="sb-nav-link-icon"><i class="fas fa-bell"></i></div>
+                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('notificaciones.index') }}" style="color:#cbd5e1;">
+                    <div class="sb-nav-link-icon" style="color:#fb923c;"><i class="fas fa-bell"></i></div>
                     <span>CU17 · Notificaciones</span>
-                    <small class="ms-auto" style="font-size:.6rem;color:#334155;">Pendiente</small>
-                </span>
+                </a>
 
                 {{-- ════════════════════════════════════════════════════════════
                      PAQUETE 4 — Comunicación y Reportes: CU11 CU12 CU14 CU18 CU19
@@ -212,17 +211,15 @@
                     <span>CU14 · Reportes de Pagos</span>
                 </a>
 
-                <span class="nav-link d-flex align-items-center gap-2" style="color:#334155;cursor:default;">
-                    <div class="sb-nav-link-icon"><i class="fas fa-exclamation-circle"></i></div>
+                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('reclamos.index') }}" style="color:#cbd5e1;">
+                    <div class="sb-nav-link-icon" style="color:#a78bfa;"><i class="fas fa-exclamation-circle"></i></div>
                     <span>CU18 · Reclamos Administrativos</span>
-                    <small class="ms-auto" style="font-size:.6rem;color:#334155;">Pendiente</small>
-                </span>
+                </a>
 
-                <span class="nav-link d-flex align-items-center gap-2" style="color:#334155;cursor:default;">
-                    <div class="sb-nav-link-icon"><i class="fas fa-calendar-star"></i></div>
+                <a class="nav-link d-flex align-items-center gap-2" href="{{ route('eventos.index') }}" style="color:#cbd5e1;">
+                    <div class="sb-nav-link-icon" style="color:#a78bfa;"><i class="fas fa-calendar-star"></i></div>
                     <span>CU19 · Eventos Comunitarios</span>
-                    <small class="ms-auto" style="font-size:.6rem;color:#334155;">Pendiente</small>
-                </span>
+                </a>
 
                 {{-- OTROS --}}
                 <div class="sb-sidenav-menu-heading mt-2"

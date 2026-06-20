@@ -19,6 +19,7 @@ class Notificacion extends Model
         'residente_id',
         'ruta',
         'leida',
+        'enviada_por',
     ];
 
     public $timestamps = true; 
@@ -26,5 +27,9 @@ class Notificacion extends Model
     public function residente()
     {
         return $this->belongsTo(Residente::class);
+    }
+    public function enviadoPor()
+    {
+        return $this->belongsTo(User::class, 'enviada_por');
     }
 }

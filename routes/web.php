@@ -27,6 +27,9 @@ use App\Http\Controllers\ComunicadoController;
 use App\Http\Controllers\UnidadController;
 use App\Http\Controllers\InformeController;
 use App\Http\Controllers\IncidenciaController;
+use App\Http\Controllers\ReclamoController;
+use App\Http\Controllers\EventoController;
+use App\Http\Controllers\NotificacionController;
 use App\Models\Bitacora;
 
 // ── Recuperación de contraseña ────────────────────────────────────────────────
@@ -134,6 +137,25 @@ Route::resource('empresas', EmpresaExternaController::class);
 // ── CU16 — Incidencias y denuncias ────────────────────────────────────────────
 Route::middleware(['auth'])->group(function () {
     Route::resource('incidencias', IncidenciaController::class);
+});
+
+// ── CU17 — Notificaciones a residentes ────────────────────────────────────────
+Route::middleware(['auth'])->group(function () {
+    Route::resource('notificaciones', NotificacionController::class)
+         ->parameters(['notificaciones' => 'notificacion'])
+         ->except(['edit', 'update']);
+    Route::post('/notificaciones/{notificacion}/marcar-leida', [NotificacionController::class, 'marcarLeida'])
+         ->name('notificaciones.marcar-leida');
+});
+
+// ── CU18 — Reclamos administrativos ──────────────────────────────────────────
+Route::middleware(['auth'])->group(function () {
+    Route::resource('reclamos', ReclamoController::class);
+});
+
+// ── CU19 — Eventos comunitarios ──────────────────────────────────────────────
+Route::middleware(['auth'])->group(function () {
+    Route::resource('eventos', EventoController::class);
 });
 
 // ── CU20 — Gestión de Propiedades ────────────────────────────────────────────

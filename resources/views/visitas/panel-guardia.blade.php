@@ -226,6 +226,51 @@
         </div>
     </div>
 
+    {{-- Visitas pendientes fuera de la ventana de 2 horas (NUEVO) --}}
+    @if($visitasPendientesProximas->count() > 0)
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-secondary">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar"></i>
+                        Próximas visitas (aún no disponibles para registrar entrada)
+                        <span class="badge bg-secondary">{{ $visitasPendientesProximas->count() }}</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">
+                        Estas visitas ya están registradas en el sistema, pero solo se puede
+                        registrar su entrada desde 30 minutos antes de la hora de inicio.
+                    </p>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Visitante</th>
+                                    <th>Residente</th>
+                                    <th>Código</th>
+                                    <th>Inicio previsto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($visitasPendientesProximas as $visita)
+                                <tr>
+                                    <td>{{ $visita->nombre_visitante }}</td>
+                                    <td>{{ $visita->residente->nombre_completo ?? 'N/D' }}</td>
+                                    <td><strong>{{ $visita->codigo }}</strong></td>
+                                    <td>{{ $visita->fecha_inicio->format('d/m/Y H:i') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- Estadísticas del día --}}
     <div class="row mt-4">
         <div class="col-md-12">

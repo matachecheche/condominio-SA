@@ -22,6 +22,22 @@ class PagoController extends Controller
         return view('pagos.index', compact('pagos'));
     }
 
+    /**
+     * Formulario manual de "Registrar Pago" usado por administradores
+     * para registrar el pago de cualquier cuota (selecciona la cuota,
+     * el monto y el método). Antes esta vista no era alcanzable porque
+     * no existía la ruta GET /pagos/create.
+     */
+    public function create()
+    {
+        $cuotas = Cuota::with('residente')
+            ->where('estado', '!=', 'pagado')
+            ->orderByDesc('fecha_vencimiento')
+            ->get();
+
+        return view('pagos.create', compact('cuotas'));
+    }
+
     private function filtrarPagos(Request $request)
     {
         $query = \App\Models\Pago::with(['cuota.residente', 'user']);
@@ -105,7 +121,7 @@ class PagoController extends Controller
         }
 
         // Generar contenido QR
-        $contenidoQr = urlencode("Pago de cuota\nMonto: Bs {$cuota->monto}\nConcepto: {$cuota->concepto}");
+        $contenidoQr = urlencode("Pago de cuota\nMonto: Bs {$cuota->monto}\nConcepto: {$cuota->titulo}");
         $qrBase64    = "https://api.qrserver.com/v1/create-qr-code/?data={$contenidoQr}&size=200x200";
 
         return view('pagos.opciones_pago', [
@@ -163,7 +179,7 @@ class PagoController extends Controller
                 'price_data' => [
                     'currency' => 'bob', // o 'usd' si lo manejarás así
                     'product_data' => [
-                        'name' => 'Pago de cuota: ' . $cuota->concepto,
+                        'name' => 'Pago de cuota: ' . $cuota->titulo,
                     ],
                     'unit_amount' => $cuota->monto * 100, // Stripe usa centavos
                 ],

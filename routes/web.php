@@ -78,6 +78,7 @@ Route::resource('tipos-cuotas', TipoCuotaController::class);
 Route::resource('cuotas', CuotaController::class);
 Route::middleware(['auth'])->group(function () {
     Route::resource('pagos', PagoController::class)->only(['index', 'store']);
+    Route::get('/pagos/create', [PagoController::class, 'create'])->name('pagos.create');
     Route::get('/mis-cuotas', [PagoController::class, 'misCuotas'])->name('pagos.mis_cuotas');
     Route::post('/pagos/qr', [PagoController::class, 'pagoQR'])->name('pagos.qr');
     Route::get('/pagos/create/cuota/{cuota}', [PagoController::class, 'createCuota'])->name('pagos.create.cuota');

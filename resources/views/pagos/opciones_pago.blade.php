@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <h4>
         Pago de Cuota/Multa:
-        {{ $entidad->concepto }} (Bs {{ $entidad->monto }})
+        {{ $entidad->titulo ?? $entidad->motivo ?? 'N/D' }} (Bs {{ $entidad->monto }})
     </h4>
 
     <div class="row">

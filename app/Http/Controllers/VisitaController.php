@@ -547,13 +547,27 @@ class VisitaController extends Controller
             ->with('residente')
             ->get();
             
+        // Visitas "listas para ingresar ahora" (dentro de la ventana de
+        // tolerancia que exige registrarEntrada(): 30 min antes de
+        // fecha_inicio hasta fecha_fin).
         $visitasPendientes = Visita::where('estado', 'pendiente')
             ->where('fecha_inicio', '<=', Carbon::now()->addHours(2))
             ->where('fecha_inicio', '>=', Carbon::now()->subMinutes(30))
             ->with('residente')
             ->get();
 
-        return view('visitas.panel-guardia', compact('visitasEnCurso', 'visitasPendientes'));
+        // Resto de visitas pendientes futuras que aún no entran en la
+        // ventana de 2 horas. Antes el panel simplemente no las mostraba,
+        // dando la impresión de que una visita recién registrada se
+        // "perdía". Ahora se listan aparte para que el guardia/admin las
+        // vea igual, aunque todavía no pueda registrar la entrada.
+        $visitasPendientesProximas = Visita::where('estado', 'pendiente')
+            ->where('fecha_inicio', '>', Carbon::now()->addHours(2))
+            ->with('residente')
+            ->orderBy('fecha_inicio')
+            ->get();
+
+        return view('visitas.panel-guardia', compact('visitasEnCurso', 'visitasPendientes', 'visitasPendientesProximas'));
     }
 
     // BUSCAR POR CÓDIGO - SOLO PORTERO Y ADMIN

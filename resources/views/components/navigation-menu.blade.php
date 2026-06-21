@@ -110,6 +110,7 @@
                             <i class="fas fa-tags me-2"></i> Tipos de Cuota
                         </a>
                         <a class="nav-link ps-4" href="{{ route('pagos.index') }}" style="color:#94a3b8;">
+                        <a class="nav-link ps-4" href="{{ route('pagos.create') }}">Registrar Pago</a>
                             <i class="fas fa-money-bill me-2"></i> Pagos
                         </a>
                         <a class="nav-link ps-4" href="{{ route('multas.index') }}" style="color:#94a3b8;">

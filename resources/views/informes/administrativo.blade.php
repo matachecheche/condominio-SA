@@ -445,8 +445,15 @@ grabarBtn.addEventListener('click', async () => {
                 const resp = await fetch(RUTAS.transcribir, {method:'POST', headers:{'X-CSRF-TOKEN':CSRF}, body:fd});
                 const data = await resp.json();
                 if(data.error){ estadoVoz.innerHTML = '<span class="text-danger">'+esc(data.error)+'</span>'; return; }
-                document.getElementById('textoVoz').value = data.texto || '';
-                estadoVoz.innerHTML = '<span class="text-success">Audio transcrito. Revisa el texto y genera el reporte.</span>';
+                const texto = (data.texto || '').trim();
+                document.getElementById('textoVoz').value = texto;
+                if(!texto){
+                    estadoVoz.innerHTML = '<span class="text-warning">No se entendió el audio. Intenta de nuevo o escribe la consulta.</span>';
+                    return;
+                }
+                // Muestra el texto transcrito y genera el reporte automáticamente.
+                estadoVoz.innerHTML = '<span class="text-success"><i class="fas fa-quote-left me-1"></i>'+esc(texto)+'</span>';
+                await generarReporteIa();
             } catch(e){ estadoVoz.innerHTML = '<span class="text-danger">Error al transcribir.</span>'; }
         };
         mediaRecorder.start();
@@ -455,13 +462,13 @@ grabarBtn.addEventListener('click', async () => {
     } catch(e){ estadoVoz.innerHTML = '<span class="text-danger">No se pudo acceder al micrófono.</span>'; }
 });
 
-document.getElementById('interpretarBtn').addEventListener('click', async () => {
+async function generarReporteIa(){
     const texto = document.getElementById('textoVoz').value.trim();
     const prev = document.getElementById('previewVoz');
     const expl = document.getElementById('explicacionVoz');
     const acc = document.getElementById('accionesVoz');
     if(!texto){ estadoVoz.innerHTML = '<span class="text-danger">Escribe o graba una instrucción.</span>'; return; }
-    estadoVoz.innerHTML = '<span class="spinner-border spinner-sm"></span> Interpretando con IA…';
+    estadoVoz.innerHTML = '<span class="spinner-border spinner-sm"></span> Generando reporte con IA…';
     expl.classList.add('d-none'); acc.style.display='none'; prev.innerHTML = '';
     try {
         const resp = await fetch(RUTAS.interpretar, {
@@ -478,8 +485,9 @@ document.getElementById('interpretarBtn').addEventListener('click', async () => 
         acc.style.display='flex';
         const head = '<div class="d-flex justify-content-between align-items-center mb-2"><h5 class="mb-0">'+esc(data.titulo)+'</h5><span class="badge bg-secondary">'+data.count+' registros</span></div>';
         prev.innerHTML = head + tablaHtml(data.headers, data.rows);
-    } catch(e){ estadoVoz.innerHTML = '<span class="text-danger">Error al interpretar la instrucción.</span>'; }
-});
+    } catch(e){ estadoVoz.innerHTML = '<span class="text-danger">Error al generar el reporte.</span>'; }
+}
+document.getElementById('interpretarBtn').addEventListener('click', generarReporteIa);
 
 document.querySelectorAll('.btn-exp-voz').forEach(btn => btn.addEventListener('click', async () => {
     if(!SPEC_ACTUAL){ alert('Genera un reporte primero.'); return; }

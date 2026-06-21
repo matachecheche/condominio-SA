@@ -125,8 +125,25 @@ Route::middleware(['auth'])->group(function () {
 
 // ── CU12 + CU14 — Informes administrativos y reportes de pagos ───────────────
 Route::middleware(['auth'])->group(function () {
+    // CU12 — Generar Informe Administrativo
     Route::get('/informes/administrativo', [InformeController::class, 'administrativo'])
          ->name('informes.administrativo');
+
+    // Modo dinámico (el usuario elige tabla y columnas)
+    Route::get('/informes/administrativo/columnas', [InformeController::class, 'columnas'])
+         ->name('informes.columnas');
+    Route::post('/informes/administrativo/dinamico', [InformeController::class, 'dinamico'])
+         ->name('informes.dinamico');
+
+    // Modo por voz / texto (Whisper + OpenAI)
+    Route::post('/informes/administrativo/voz/transcribir', [InformeController::class, 'transcribir'])
+         ->name('informes.transcribir');
+    Route::post('/informes/administrativo/voz/interpretar', [InformeController::class, 'interpretar'])
+         ->name('informes.interpretar');
+    Route::post('/informes/administrativo/voz/exportar', [InformeController::class, 'exportarIa'])
+         ->name('informes.exportar-ia');
+
+    // CU14 — Reportes de pagos
     Route::get('/informes/pagos', [InformeController::class, 'pagos'])
          ->name('informes.pagos');
 });

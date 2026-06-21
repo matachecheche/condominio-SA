@@ -31,4 +31,20 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | OpenAI (CU12 — Reportes por voz/texto)
+    |--------------------------------------------------------------------------
+    | Whisper transcribe el audio y el modelo de chat interpreta la instrucción
+    | en lenguaje natural para generar la especificación del reporte.
+    | Configura OPENAI_API_KEY en tu archivo .env.
+    */
+    'openai' => [
+        'api_key'       => env('OPENAI_API_KEY'),
+        'model'         => env('OPENAI_MODEL', 'gpt-4o-mini'),
+        'whisper_model' => env('OPENAI_WHISPER_MODEL', 'whisper-1'),
+        'base_url'      => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
+        'timeout'       => env('OPENAI_TIMEOUT', 60),
+    ],
+
 ];

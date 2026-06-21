@@ -43,33 +43,43 @@ class InformeController extends Controller
 
         $reporteData   = null;
         $reporteActivo = null;
+        $errorReporte  = null;
 
         if ($reporte && isset($catalogoEstatico[$reporte])) {
-            $filtros = $request->only(['desde', 'hasta', 'estado', 'tipo_residente', 'metodo']);
-            $reporteData   = InformeEstatico::generar($reporte, $filtros);
             $reporteActivo = $reporte;
 
-            // ¿Descarga directa?
-            if (in_array($formato, self::FORMATOS_DESCARGA, true)) {
-                $this->registrarEnBitacora("Exportó informe administrativo «{$reporte}» en formato {$formato}");
+            try {
+                $filtros     = $request->only(['desde', 'hasta', 'estado', 'tipo_residente', 'metodo']);
+                $reporteData = InformeEstatico::generar($reporte, $filtros);
 
-                return ReporteExporter::exportar($formato, [
-                    'titulo'    => $reporteData['titulo'],
-                    'subtitulo' => $this->subtituloFiltros($filtros),
-                    'headers'   => $reporteData['headers'],
-                    'rows'      => $reporteData['rows'],
-                    'meta'      => $reporteData['resumen'],
-                ]);
+                // ¿Descarga directa?
+                if (in_array($formato, self::FORMATOS_DESCARGA, true)) {
+                    $this->registrarEnBitacora("Exportó informe administrativo «{$reporte}» en formato {$formato}");
+
+                    return ReporteExporter::exportar($formato, [
+                        'titulo'    => $reporteData['titulo'],
+                        'subtitulo' => $this->subtituloFiltros($filtros),
+                        'headers'   => $reporteData['headers'],
+                        'rows'      => $reporteData['rows'],
+                        'meta'      => $reporteData['resumen'],
+                    ]);
+                }
+
+                $this->registrarEnBitacora("Consultó informe administrativo «{$reporte}»");
+            } catch (\Throwable $e) {
+                // En lugar de un error 500 opaco, mostramos el problema en pantalla.
+                report($e);
+                $reporteData  = null;
+                $errorReporte = $e->getMessage();
             }
-
-            $this->registrarEnBitacora("Consultó informe administrativo «{$reporte}»");
         }
 
         return view('informes.administrativo', compact(
             'catalogoEstatico',
             'catalogoTablas',
             'reporteData',
-            'reporteActivo'
+            'reporteActivo',
+            'errorReporte'
         ));
     }
 

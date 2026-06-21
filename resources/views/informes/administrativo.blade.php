@@ -105,31 +105,40 @@
                             </div>
                         </div>
 
-                        <div class="mt-3 d-flex flex-wrap gap-2">
-                            <button type="submit" class="btn btn-primary btn-sm" onclick="document.getElementById('formatoEstatico').value=''">
-                                <i class="fas fa-eye me-1"></i> Visualizar
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary" onclick="document.getElementById('formatoEstatico').value=''">
+                                <i class="fas fa-eye me-1"></i> Visualizar informe
                             </button>
-                            <button type="submit" class="btn btn-outline-dark btn-sm" onclick="document.getElementById('formatoEstatico').value='html'">
-                                <i class="fas fa-code me-1"></i> HTML
-                            </button>
-                            <button type="submit" class="btn btn-outline-success btn-sm" onclick="document.getElementById('formatoEstatico').value='xlsx'">
-                                <i class="fas fa-file-excel me-1"></i> Excel
-                            </button>
-                            <button type="submit" class="btn btn-outline-success btn-sm" onclick="document.getElementById('formatoEstatico').value='csv'">
-                                <i class="fas fa-file-csv me-1"></i> CSV
-                            </button>
-                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="document.getElementById('formatoEstatico').value='pdf'">
-                                <i class="fas fa-file-pdf me-1"></i> PDF
-                            </button>
+                            <small class="text-muted ms-2 d-none d-md-inline">
+                                Elige el informe y pulsa aquí. Las opciones de descarga aparecerán junto al resultado.
+                            </small>
                         </div>
                     </form>
 
                     <hr>
 
-                    @if($reporteData)
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="mb-0">{{ $reporteData['titulo'] }}</h5>
-                            <span class="badge bg-secondary">{{ $reporteData['count'] }} registros</span>
+                    @if($errorReporte)
+                        <div class="alert alert-danger">
+                            <i class="fas fa-circle-exclamation me-1"></i>
+                            No se pudo generar el informe: {{ $errorReporte }}
+                        </div>
+                    @elseif($reporteData)
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                            <div>
+                                <h5 class="mb-0 d-inline-block">{{ $reporteData['titulo'] }}</h5>
+                                <span class="badge bg-secondary ms-2">{{ $reporteData['count'] }} registros</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <span class="text-muted small me-1"><i class="fas fa-download me-1"></i>Descargar:</span>
+                                <button form="formEstatico" type="submit" formnovalidate class="btn btn-outline-dark btn-sm"
+                                        onclick="document.getElementById('formatoEstatico').value='html'"><i class="fas fa-code me-1"></i> HTML</button>
+                                <button form="formEstatico" type="submit" formnovalidate class="btn btn-outline-success btn-sm"
+                                        onclick="document.getElementById('formatoEstatico').value='xlsx'"><i class="fas fa-file-excel me-1"></i> Excel</button>
+                                <button form="formEstatico" type="submit" formnovalidate class="btn btn-outline-success btn-sm"
+                                        onclick="document.getElementById('formatoEstatico').value='csv'"><i class="fas fa-file-csv me-1"></i> CSV</button>
+                                <button form="formEstatico" type="submit" formnovalidate class="btn btn-outline-danger btn-sm"
+                                        onclick="document.getElementById('formatoEstatico').value='pdf'"><i class="fas fa-file-pdf me-1"></i> PDF</button>
+                            </div>
                         </div>
 
                         @if(!empty($reporteData['resumen']))
@@ -167,7 +176,7 @@
                     @else
                         <div class="text-center text-muted py-4">
                             <i class="fas fa-table fa-2x mb-2 d-block opacity-50"></i>
-                            Selecciona un informe y pulsa <strong>Visualizar</strong>.
+                            Selecciona un informe y pulsa <strong>Visualizar informe</strong>.
                         </div>
                     @endif
                 </div>

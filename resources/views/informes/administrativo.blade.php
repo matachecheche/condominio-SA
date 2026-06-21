@@ -218,18 +218,23 @@
                         </button>
                     </div>
 
-                    <div class="mt-3 d-flex flex-wrap gap-2" id="accionesDinamico" style="display:none!important">
-                        <button type="button" class="btn btn-primary btn-sm" id="generarDinamico">
-                            <i class="fas fa-eye me-1"></i> Generar
+                    <div class="mt-3" id="accionesDinamico" style="display:none">
+                        <button type="button" class="btn btn-primary" id="generarDinamico">
+                            <i class="fas fa-eye me-1"></i> Generar vista previa
                         </button>
+                        <small class="text-muted ms-2 d-none d-md-inline">Crea la vista previa del reporte antes de descargarlo.</small>
+                    </div>
+
+                    <hr>
+                    <div id="previewDinamico" class="preview-wrap"></div>
+
+                    <div class="mt-3 d-flex flex-wrap gap-2 align-items-center" id="descargasDinamico" style="display:none">
+                        <span class="text-muted small me-1"><i class="fas fa-download me-1"></i>Descargar reporte:</span>
                         <button type="button" class="btn btn-outline-dark btn-sm btn-exp-din" data-formato="html"><i class="fas fa-code me-1"></i> HTML</button>
                         <button type="button" class="btn btn-outline-success btn-sm btn-exp-din" data-formato="xlsx"><i class="fas fa-file-excel me-1"></i> Excel</button>
                         <button type="button" class="btn btn-outline-success btn-sm btn-exp-din" data-formato="csv"><i class="fas fa-file-csv me-1"></i> CSV</button>
                         <button type="button" class="btn btn-outline-danger btn-sm btn-exp-din" data-formato="pdf"><i class="fas fa-file-pdf me-1"></i> PDF</button>
                     </div>
-
-                    <hr>
-                    <div id="previewDinamico" class="preview-wrap"></div>
                 </div>
 
                 {{-- ══════════════════ MODO 3: VOZ / TEXTO ══════════════════ --}}
@@ -260,16 +265,16 @@
 
                     <div id="explicacionVoz" class="alert alert-info mt-3 d-none"></div>
 
-                    <div class="mt-2 d-flex flex-wrap gap-2" id="accionesVoz" style="display:none!important">
-                        <span class="badge bg-dark align-self-center" id="tituloVoz"></span>
+                    <hr>
+                    <div id="previewVoz" class="preview-wrap"></div>
+
+                    <div class="mt-3 d-flex flex-wrap gap-2 align-items-center" id="descargasVoz">
+                        <span class="text-muted small me-1"><i class="fas fa-download me-1"></i>Descargar reporte:</span>
                         <button type="button" class="btn btn-outline-dark btn-sm btn-exp-voz" data-formato="html"><i class="fas fa-code me-1"></i> HTML</button>
                         <button type="button" class="btn btn-outline-success btn-sm btn-exp-voz" data-formato="xlsx"><i class="fas fa-file-excel me-1"></i> Excel</button>
                         <button type="button" class="btn btn-outline-success btn-sm btn-exp-voz" data-formato="csv"><i class="fas fa-file-csv me-1"></i> CSV</button>
                         <button type="button" class="btn btn-outline-danger btn-sm btn-exp-voz" data-formato="pdf"><i class="fas fa-file-pdf me-1"></i> PDF</button>
                     </div>
-
-                    <hr>
-                    <div id="previewVoz" class="preview-wrap"></div>
                 </div>
 
             </div>
@@ -324,11 +329,16 @@ const tablaDin = document.getElementById('tablaDinamica');
 const columnasBox = document.getElementById('columnasBox');
 const filtrosBox = document.getElementById('filtrosBox');
 const accionesDin = document.getElementById('accionesDinamico');
+const descargasDin = document.getElementById('descargasDinamico');
 let COLUMNAS_ACTUALES = { base:{}, relaciones:{} };
+let DIN_GENERADO = null; // payload de la última vista previa generada (null = aún no se generó)
 
 tablaDin.addEventListener('change', async () => {
     const tabla = tablaDin.value;
-    if(!tabla){ columnasBox.classList.add('d-none'); filtrosBox.classList.add('d-none'); accionesDin.style.display='none'; return; }
+    // Cada cambio de tabla limpia la vista previa anterior e invalida descargas.
+    DIN_GENERADO = null;
+    document.getElementById('previewDinamico').innerHTML = '';
+    if(!tabla){ columnasBox.classList.add('d-none'); filtrosBox.classList.add('d-none'); accionesDin.style.display='none'; descargasDin.style.display='none'; return; }
     try {
         const resp = await fetch(RUTAS.columnas + '?tabla=' + encodeURIComponent(tabla), {headers:{'X-Requested-With':'XMLHttpRequest'}});
         const data = await resp.json();
@@ -349,7 +359,8 @@ tablaDin.addEventListener('change', async () => {
         document.getElementById('filtrosLista').innerHTML = '';
         columnasBox.classList.remove('d-none');
         filtrosBox.classList.remove('d-none');
-        accionesDin.style.display='flex';
+        accionesDin.style.display='block';
+        descargasDin.style.display='flex';
     } catch(e){ alert('No se pudieron cargar las columnas.'); }
 });
 
@@ -395,23 +406,30 @@ function payloadDinamico(){
 
 document.getElementById('generarDinamico').addEventListener('click', async () => {
     const prev = document.getElementById('previewDinamico');
+    DIN_GENERADO = null; // invalida descargas hasta que termine esta generación
     prev.innerHTML = '<div class="text-muted"><span class="spinner-border spinner-sm"></span> Generando…</div>';
+    const payload = payloadDinamico();
     try {
         const resp = await fetch(RUTAS.dinamico, {
             method:'POST',
             headers:{'Content-Type':'application/json','X-CSRF-TOKEN':CSRF,'Accept':'application/json'},
-            body: JSON.stringify(payloadDinamico()),
+            body: JSON.stringify(payload),
         });
         const data = await resp.json();
         if(data.error){ prev.innerHTML = '<div class="alert alert-danger">'+esc(data.error)+'</div>'; return; }
+        DIN_GENERADO = payload; // las descargas usarán exactamente lo previsualizado
         const head = '<div class="d-flex justify-content-between align-items-center mb-2"><h5 class="mb-0">'+esc(data.titulo)+'</h5><span class="badge bg-secondary">'+data.count+' registros</span></div>';
         prev.innerHTML = head + tablaHtml(data.headers, data.rows);
     } catch(e){ prev.innerHTML = '<div class="alert alert-danger">Error al generar el reporte.</div>'; }
 });
 
 document.querySelectorAll('.btn-exp-din').forEach(btn => btn.addEventListener('click', async () => {
-    if(!tablaDin.value){ alert('Selecciona una tabla primero.'); return; }
-    const p = payloadDinamico(); p.formato = btn.dataset.formato;
+    if(!DIN_GENERADO){
+        document.getElementById('previewDinamico').innerHTML =
+            '<div class="alert alert-warning"><i class="fas fa-circle-info me-1"></i>Primero pulsa <strong>Generar vista previa</strong> para crear el reporte; luego podrás descargarlo.</div>';
+        return;
+    }
+    const p = Object.assign({}, DIN_GENERADO, {formato: btn.dataset.formato});
     try {
         const resp = await fetch(RUTAS.dinamico, {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':CSRF}, body: JSON.stringify(p)});
         await descargar(resp);
@@ -466,10 +484,10 @@ async function generarReporteIa(){
     const texto = document.getElementById('textoVoz').value.trim();
     const prev = document.getElementById('previewVoz');
     const expl = document.getElementById('explicacionVoz');
-    const acc = document.getElementById('accionesVoz');
     if(!texto){ estadoVoz.innerHTML = '<span class="text-danger">Escribe o graba una instrucción.</span>'; return; }
+    SPEC_ACTUAL = null;                      // invalida descargas hasta nueva generación
     estadoVoz.innerHTML = '<span class="spinner-border spinner-sm"></span> Generando reporte con IA…';
-    expl.classList.add('d-none'); acc.style.display='none'; prev.innerHTML = '';
+    expl.classList.add('d-none'); prev.innerHTML = '';   // limpia la vista previa anterior
     try {
         const resp = await fetch(RUTAS.interpretar, {
             method:'POST',
@@ -479,10 +497,8 @@ async function generarReporteIa(){
         const data = await resp.json();
         if(data.error){ estadoVoz.innerHTML='<span class="text-danger">'+esc(data.error)+'</span>'; return; }
         estadoVoz.innerHTML = '';
-        SPEC_ACTUAL = data.spec;
+        SPEC_ACTUAL = data.spec;             // ya hay reporte: se habilitan las descargas
         if(data.explicacion){ expl.textContent = data.explicacion; expl.classList.remove('d-none'); }
-        document.getElementById('tituloVoz').textContent = data.titulo || 'Reporte';
-        acc.style.display='flex';
         const head = '<div class="d-flex justify-content-between align-items-center mb-2"><h5 class="mb-0">'+esc(data.titulo)+'</h5><span class="badge bg-secondary">'+data.count+' registros</span></div>';
         prev.innerHTML = head + tablaHtml(data.headers, data.rows);
     } catch(e){ estadoVoz.innerHTML = '<span class="text-danger">Error al generar el reporte.</span>'; }
@@ -490,7 +506,11 @@ async function generarReporteIa(){
 document.getElementById('interpretarBtn').addEventListener('click', generarReporteIa);
 
 document.querySelectorAll('.btn-exp-voz').forEach(btn => btn.addEventListener('click', async () => {
-    if(!SPEC_ACTUAL){ alert('Genera un reporte primero.'); return; }
+    if(!SPEC_ACTUAL){
+        document.getElementById('previewVoz').innerHTML =
+            '<div class="alert alert-warning"><i class="fas fa-circle-info me-1"></i>Aún no has generado ningún reporte. Escribe o graba una instrucción y pulsa <strong>Generar reporte</strong>; luego podrás descargarlo.</div>';
+        return;
+    }
     const p = Object.assign({}, SPEC_ACTUAL, {formato: btn.dataset.formato});
     try {
         const resp = await fetch(RUTAS.exportarIa, {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':CSRF}, body: JSON.stringify(p)});

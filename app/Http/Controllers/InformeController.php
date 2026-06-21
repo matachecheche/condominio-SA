@@ -49,8 +49,7 @@ class InformeController extends Controller
             $reporteActivo = $reporte;
 
             try {
-                $filtros     = $request->only(['desde', 'hasta', 'estado', 'tipo_residente', 'metodo']);
-                $reporteData = InformeEstatico::generar($reporte, $filtros);
+                $reporteData = InformeEstatico::generar($reporte);
 
                 // ¿Descarga directa?
                 if (in_array($formato, self::FORMATOS_DESCARGA, true)) {
@@ -58,7 +57,7 @@ class InformeController extends Controller
 
                     return ReporteExporter::exportar($formato, [
                         'titulo'    => $reporteData['titulo'],
-                        'subtitulo' => $this->subtituloFiltros($filtros),
+                        'subtitulo' => InformeEstatico::descripcion($reporte),
                         'headers'   => $reporteData['headers'],
                         'rows'      => $reporteData['rows'],
                         'meta'      => $reporteData['resumen'],
@@ -305,25 +304,5 @@ class InformeController extends Controller
         $this->registrarEnBitacora('Generó reporte de pagos');
 
         return view('informes.pagos', compact('pagos', 'total', 'morosos'));
-    }
-
-    /** Construye un subtítulo legible a partir de los filtros aplicados. */
-    private function subtituloFiltros(array $filtros): string
-    {
-        $partes = [];
-        if (! empty($filtros['desde']) || ! empty($filtros['hasta'])) {
-            $partes[] = 'Período: ' . ($filtros['desde'] ?? '…') . ' a ' . ($filtros['hasta'] ?? '…');
-        }
-        if (! empty($filtros['estado'])) {
-            $partes[] = 'Estado: ' . ucfirst($filtros['estado']);
-        }
-        if (! empty($filtros['tipo_residente'])) {
-            $partes[] = 'Tipo: ' . $filtros['tipo_residente'];
-        }
-        if (! empty($filtros['metodo'])) {
-            $partes[] = 'Método: ' . ucfirst($filtros['metodo']);
-        }
-
-        return implode(' · ', $partes);
     }
 }

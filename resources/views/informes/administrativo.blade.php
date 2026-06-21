@@ -11,6 +11,11 @@
     .col-pill input { margin:0; }
     .filtro-row { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:.5rem; margin-bottom:.5rem; }
     .preview-wrap { max-height:600px; overflow:auto; }
+    .report-card { transition:transform .12s ease, box-shadow .12s ease; border:1px solid #e2e8f0; }
+    .report-card:hover { transform:translateY(-3px); box-shadow:0 .5rem 1rem rgba(15,23,42,.12); }
+    .rep-ico { width:34px; height:34px; border-radius:9px; flex:0 0 auto;
+               display:flex; align-items:center; justify-content:center;
+               background:#eef2ff; color:#4f46e5; font-size:.95rem; }
     #grabarBtn.grabando { background:#dc2626 !important; border-color:#dc2626 !important; color:#fff !important; }
     .pulse { animation:pulse 1.2s infinite; }
     @keyframes pulse { 0%{opacity:1;} 50%{opacity:.4;} 100%{opacity:1;} }
@@ -57,65 +62,44 @@
                 <div class="tab-pane fade show active" id="tab-estatico" role="tabpanel">
                     <p class="text-muted small">Consultas predefinidas sobre las tablas del sistema, listas para visualizar o descargar.</p>
 
-                    <form method="GET" action="{{ route('informes.administrativo') }}" id="formEstatico">
-                        <input type="hidden" name="formato" id="formatoEstatico" value="">
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Tipo de informe</label>
-                                <select name="reporte" id="reporteSelect" class="form-select form-select-sm" required>
-                                    <option value="">— Selecciona un informe —</option>
-                                    @foreach($catalogoEstatico as $key => $def)
-                                        <option value="{{ $key }}" {{ $reporteActivo === $key ? 'selected' : '' }}>
-                                            {{ $def['label'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-2 filtro-est" data-filtro="rango">
-                                <label class="form-label">Desde</label>
-                                <input type="date" name="desde" class="form-control form-control-sm" value="{{ request('desde') }}">
-                            </div>
-                            <div class="col-md-2 filtro-est" data-filtro="rango">
-                                <label class="form-label">Hasta</label>
-                                <input type="date" name="hasta" class="form-control form-control-sm" value="{{ request('hasta') }}">
-                            </div>
-                            <div class="col-md-2 filtro-est" data-filtro="estado">
-                                <label class="form-label">Estado</label>
-                                <select name="estado" id="estadoEstatico" class="form-select form-select-sm">
-                                    <option value="">Todos</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2 filtro-est" data-filtro="tipo_residente">
-                                <label class="form-label">Tipo residente</label>
-                                <select name="tipo_residente" class="form-select form-select-sm">
-                                    <option value="">Todos</option>
-                                    <option value="Propietario" {{ request('tipo_residente')=='Propietario'?'selected':'' }}>Propietario</option>
-                                    <option value="Inquilino" {{ request('tipo_residente')=='Inquilino'?'selected':'' }}>Inquilino</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2 filtro-est" data-filtro="metodo">
-                                <label class="form-label">Método</label>
-                                <select name="metodo" class="form-select form-select-sm">
-                                    <option value="">Todos</option>
-                                    @foreach(['efectivo','QR','Stripe','transferencia'] as $met)
-                                        <option value="{{ $met }}" {{ request('metodo')==$met?'selected':'' }}>{{ ucfirst($met) }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                    @php $grupos = collect($catalogoEstatico)->groupBy('grupo', true); @endphp
+                    @foreach($grupos as $grupo => $items)
+                        <h6 class="text-uppercase text-muted fw-bold mt-3 mb-2" style="letter-spacing:.05em; font-size:.75rem;">
+                            <i class="fas fa-layer-group me-1"></i> {{ $grupo }}
+                        </h6>
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+                            @foreach($items as $key => $def)
+                                <div class="col">
+                                    <div class="card h-100 report-card {{ $reporteActivo === $key ? 'border-primary shadow-sm' : '' }}">
+                                        <div class="card-body d-flex flex-column">
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <span class="rep-ico"><i class="fas {{ $def['icono'] }}"></i></span>
+                                                <h6 class="mb-0">{{ $def['label'] }}</h6>
+                                            </div>
+                                            <p class="text-muted small flex-grow-1 mb-3">{{ $def['descripcion'] }}</p>
+                                            <div class="d-flex flex-wrap gap-1 align-items-center">
+                                                <a href="{{ route('informes.administrativo', ['reporte' => $key]) }}#resultado"
+                                                   class="btn btn-primary btn-sm flex-grow-1">
+                                                    <i class="fas fa-eye me-1"></i> Visualizar
+                                                </a>
+                                                <a href="{{ route('informes.administrativo', ['reporte' => $key, 'formato' => 'html']) }}"
+                                                   class="btn btn-outline-dark btn-sm" title="Descargar HTML"><i class="fas fa-code"></i></a>
+                                                <a href="{{ route('informes.administrativo', ['reporte' => $key, 'formato' => 'xlsx']) }}"
+                                                   class="btn btn-outline-success btn-sm" title="Descargar Excel"><i class="fas fa-file-excel"></i></a>
+                                                <a href="{{ route('informes.administrativo', ['reporte' => $key, 'formato' => 'csv']) }}"
+                                                   class="btn btn-outline-success btn-sm" title="Descargar CSV"><i class="fas fa-file-csv"></i></a>
+                                                <a href="{{ route('informes.administrativo', ['reporte' => $key, 'formato' => 'pdf']) }}"
+                                                   class="btn btn-outline-danger btn-sm" title="Descargar PDF"><i class="fas fa-file-pdf"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
-
-                        <div class="mt-3">
-                            <button type="submit" class="btn btn-primary" onclick="document.getElementById('formatoEstatico').value=''">
-                                <i class="fas fa-eye me-1"></i> Visualizar informe
-                            </button>
-                            <small class="text-muted ms-2 d-none d-md-inline">
-                                Elige el informe y pulsa aquí. Las opciones de descarga aparecerán junto al resultado.
-                            </small>
-                        </div>
-                    </form>
+                    @endforeach
 
                     <hr>
+                    <div id="resultado"></div>
 
                     @if($errorReporte)
                         <div class="alert alert-danger">
@@ -130,14 +114,14 @@
                             </div>
                             <div class="d-flex flex-wrap gap-2 align-items-center">
                                 <span class="text-muted small me-1"><i class="fas fa-download me-1"></i>Descargar:</span>
-                                <button form="formEstatico" type="submit" formnovalidate class="btn btn-outline-dark btn-sm"
-                                        onclick="document.getElementById('formatoEstatico').value='html'"><i class="fas fa-code me-1"></i> HTML</button>
-                                <button form="formEstatico" type="submit" formnovalidate class="btn btn-outline-success btn-sm"
-                                        onclick="document.getElementById('formatoEstatico').value='xlsx'"><i class="fas fa-file-excel me-1"></i> Excel</button>
-                                <button form="formEstatico" type="submit" formnovalidate class="btn btn-outline-success btn-sm"
-                                        onclick="document.getElementById('formatoEstatico').value='csv'"><i class="fas fa-file-csv me-1"></i> CSV</button>
-                                <button form="formEstatico" type="submit" formnovalidate class="btn btn-outline-danger btn-sm"
-                                        onclick="document.getElementById('formatoEstatico').value='pdf'"><i class="fas fa-file-pdf me-1"></i> PDF</button>
+                                <a href="{{ route('informes.administrativo', ['reporte' => $reporteActivo, 'formato' => 'html']) }}"
+                                   class="btn btn-outline-dark btn-sm"><i class="fas fa-code me-1"></i> HTML</a>
+                                <a href="{{ route('informes.administrativo', ['reporte' => $reporteActivo, 'formato' => 'xlsx']) }}"
+                                   class="btn btn-outline-success btn-sm"><i class="fas fa-file-excel me-1"></i> Excel</a>
+                                <a href="{{ route('informes.administrativo', ['reporte' => $reporteActivo, 'formato' => 'csv']) }}"
+                                   class="btn btn-outline-success btn-sm"><i class="fas fa-file-csv me-1"></i> CSV</a>
+                                <a href="{{ route('informes.administrativo', ['reporte' => $reporteActivo, 'formato' => 'pdf']) }}"
+                                   class="btn btn-outline-danger btn-sm"><i class="fas fa-file-pdf me-1"></i> PDF</a>
                             </div>
                         </div>
 
@@ -150,7 +134,7 @@
                         @endif
 
                         @if($reporteData['count'] === 0)
-                            <div class="alert alert-info">No se encontraron registros para los filtros seleccionados.</div>
+                            <div class="alert alert-info">Este informe no tiene registros por el momento.</div>
                         @else
                             <div class="preview-wrap">
                                 <table class="table table-sm table-striped table-hover">
@@ -176,7 +160,7 @@
                     @else
                         <div class="text-center text-muted py-4">
                             <i class="fas fa-table fa-2x mb-2 d-block opacity-50"></i>
-                            Selecciona un informe y pulsa <strong>Visualizar informe</strong>.
+                            Elige uno de los informes de arriba y pulsa <strong>Visualizar</strong> para verlo aquí.
                         </div>
                     @endif
                 </div>
@@ -305,21 +289,6 @@ const RUTAS = {
 };
 const CSRF = "{{ csrf_token() }}";
 
-const FILTROS_ESTATICO = {!! json_encode(collect($catalogoEstatico)->map(fn($d)=>$d['filtros'])) !!};
-
-const ESTADOS = {
-    unidades:    ['activa','inactiva'],
-    propiedades: ['disponible','ocupada','activa','mantenimiento'],
-    cuotas:      ['pendiente','activa','cancelada','pagado'],
-    pagos:       ['pendiente','aprobado','rechazado'],
-    multas:      ['pendiente','pagada','anulada'],
-    incidencias: ['pendiente','en_revision','resuelto','cerrado'],
-    reclamos:    ['pendiente','en_revision','resuelto','rechazado'],
-    visitas:     ['pendiente','en_curso','finalizada','rechazada'],
-    reservas:    ['pendiente','confirmada','cancelada'],
-    eventos:     ['programado','en_curso','finalizado','cancelado'],
-};
-
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function tablaHtml(headers, rows){
@@ -349,26 +318,6 @@ async function descargar(resp){
     a.href = url; a.download = nombre; document.body.appendChild(a); a.click();
     a.remove(); URL.revokeObjectURL(url);
 }
-
-/* MODO 1: Estático */
-const reporteSelect = document.getElementById('reporteSelect');
-const estadoEstatico = document.getElementById('estadoEstatico');
-
-function refrescarFiltrosEstatico(){
-    const rep = reporteSelect.value;
-    const filtros = FILTROS_ESTATICO[rep] || [];
-    document.querySelectorAll('.filtro-est').forEach(el => {
-        el.style.display = filtros.includes(el.dataset.filtro) ? '' : 'none';
-    });
-    if(estadoEstatico){
-        const actual = "{{ request('estado') }}";
-        const ops = ESTADOS[rep] || [];
-        estadoEstatico.innerHTML = '<option value="">Todos</option>' +
-            ops.map(e => '<option value="'+e+'" '+(e===actual?'selected':'')+'>'+(e.charAt(0).toUpperCase()+e.slice(1).replace(/_/g,' '))+'</option>').join('');
-    }
-}
-reporteSelect.addEventListener('change', refrescarFiltrosEstatico);
-refrescarFiltrosEstatico();
 
 /* MODO 2: Dinámico */
 const tablaDin = document.getElementById('tablaDinamica');

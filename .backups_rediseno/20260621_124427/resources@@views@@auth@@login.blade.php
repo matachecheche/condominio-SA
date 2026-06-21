@@ -7,12 +7,11 @@
     <title>Login - Condominios</title>
 
     <link href="{{ asset('css/plantilla.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/condominio-theme.css') }}" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"></script>
 
     <style>
         body {
-            background: linear-gradient(135deg, #1b2430, #2b3a4d);
+            background: linear-gradient(135deg, #141e30, #243b55);
             height: 100vh;
         }
 
@@ -36,14 +35,14 @@
         }
 
         .custom-input:focus {
-            box-shadow: 0 0 0 2px #c5683f;
+            box-shadow: 0 0 0 2px #00c6ff;
         }
 
         .btn-login {
             border-radius: 10px;
             padding: 10px;
             font-weight: bold;
-            background: linear-gradient(135deg, #c5683f, #5f8d6e);
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
             border: none;
             transition: 0.3s;
         }
@@ -70,7 +69,7 @@
         }
 
         .forgot-link:hover {
-            color: #d4a24c;
+            color: #00c6ff;
             text-decoration: underline;
         }
     </style>

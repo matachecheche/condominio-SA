@@ -1,0 +1,346 @@
+/* ============================================================================
+   CONDOMINIO SAN DIEGO — TEMA VISUAL
+   ----------------------------------------------------------------------------
+   Este archivo es 100% ADITIVO. Se carga DESPUÉS de plantilla.css / styles.css
+   y solo sobreescribe estilos visuales (colores, tipografía, sombras, radios).
+   No modifica estructura HTML, no depende de clases nuevas: usa las mismas
+   clases de Bootstrap / SB Admin que ya existen en las vistas (navbar, card,
+   table, btn, badge, sb-sidenav, etc.), así que funciona en TODAS las vistas
+   sin tener que tocarlas una por una.
+
+   Generado por: ciclo4_rediseno_visual.sh
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1) TIPOGRAFÍA E IDENTIDAD
+   --------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
+:root {
+  /* Paleta "condominio residencial": terracota cálido + verde salvia +
+     azul noche profundo + crema cálido. Pensada para transmitir hogar /
+     comunidad, no "panel de administración de servidor". */
+  --cnd-terracota:        #c5683f;
+  --cnd-terracota-claro:  #e08a5f;
+  --cnd-salvia:           #5f8d6e;
+  --cnd-salvia-claro:     #7fae8d;
+  --cnd-noche:            #1b2430;
+  --cnd-noche-2:          #222e3d;
+  --cnd-noche-3:          #2b3a4d;
+  --cnd-crema:            #faf6f0;
+  --cnd-crema-2:          #f3ecdf;
+  --cnd-dorado:           #d4a24c;
+  --cnd-azul-cielo:       #5b8fb0;
+  --cnd-rojo-aviso:       #c2533f;
+  --cnd-texto-suave:      #aab4c2;
+  --cnd-texto-claro:      #e7ecf1;
+
+  --cnd-font-display: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --cnd-font-body:    'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  --cnd-radius-sm: 10px;
+  --cnd-radius:    14px;
+  --cnd-radius-lg: 20px;
+
+  --cnd-shadow-card: 0 6px 28px rgba(27, 36, 48, 0.10);
+  --cnd-shadow-card-dark: 0 8px 32px rgba(0, 0, 0, 0.40);
+}
+
+body {
+  font-family: var(--cnd-font-body);
+  background-color: var(--cnd-crema);
+  color: #2b3340;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--cnd-font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ---------------------------------------------------------------------------
+   2) NAVBAR SUPERIOR (x-navigation-header)
+   --------------------------------------------------------------------------- */
+.sb-topnav.navbar {
+  background: linear-gradient(95deg, var(--cnd-noche) 0%, var(--cnd-noche-2) 60%, #28384a 100%) !important;
+  border-bottom: 3px solid var(--cnd-terracota);
+  box-shadow: 0 2px 18px rgba(0,0,0,.25);
+}
+
+.sb-topnav .navbar-brand {
+  font-family: var(--cnd-font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.sb-topnav #sidebarToggle {
+  border-radius: 8px;
+  transition: background .15s;
+}
+.sb-topnav #sidebarToggle:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.sb-topnav .dropdown-menu {
+  border-radius: var(--cnd-radius-sm);
+  overflow: hidden;
+}
+.sb-topnav .dropdown-item:hover {
+  background: var(--cnd-crema-2);
+  color: var(--cnd-terracota);
+}
+.sb-topnav .nav-link.dropdown-toggle {
+  background: rgba(255,255,255,0.06);
+  border-radius: 999px;
+  padding: .4rem .9rem !important;
+}
+
+/* ---------------------------------------------------------------------------
+   3) SIDEBAR (x-navigation-menu / sb-sidenav)
+   --------------------------------------------------------------------------- */
+#layoutSidenav_nav .sb-sidenav,
+.sb-sidenav.sb-sidenav-dark {
+  background: linear-gradient(180deg, var(--cnd-noche) 0%, #161e29 100%) !important;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+
+.sb-sidenav .sb-sidenav-menu-heading {
+  font-family: var(--cnd-font-display);
+  font-weight: 700 !important;
+  letter-spacing: .09em !important;
+}
+
+.sb-sidenav .nav-link {
+  border-radius: 10px;
+  margin: 1px 8px;
+  transition: background .15s, transform .12s, color .15s;
+}
+
+.sb-sidenav .nav-link:hover {
+  background: rgba(197, 104, 63, 0.16) !important;
+  color: var(--cnd-crema) !important;
+  transform: translateX(2px);
+}
+
+.sb-sidenav .nav-link.active,
+.sb-sidenav .nav-link[aria-expanded="true"] {
+  background: rgba(197, 104, 63, 0.22) !important;
+}
+
+.sb-sidenav-menu-nested .nav-link:hover {
+  background: rgba(95, 141, 110, 0.18) !important;
+  color: var(--cnd-crema) !important;
+}
+
+/* Iconos de cada item del sidebar: el color inline existente se conserva,
+   solo afinamos tamaño y alineación */
+.sb-sidenav .sb-nav-link-icon {
+  width: 22px;
+  text-align: center;
+}
+
+/* Scrollbar del sidebar, más discreta */
+#layoutSidenav_nav nav::-webkit-scrollbar { width: 6px; }
+#layoutSidenav_nav nav::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   4) PIE DE PÁGINA (x-footer)
+   --------------------------------------------------------------------------- */
+footer.bg-black {
+  background: var(--cnd-noche) !important;
+  border-top: 1px solid rgba(255,255,255,0.06) !important;
+}
+footer a.text-secondary:hover {
+  color: var(--cnd-terracota-claro) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   5) BOTONES
+   --------------------------------------------------------------------------- */
+.btn-primary {
+  --bs-btn-bg: var(--cnd-terracota);
+  --bs-btn-border-color: var(--cnd-terracota);
+  --bs-btn-hover-bg: #ad5733;
+  --bs-btn-hover-border-color: #ad5733;
+  --bs-btn-active-bg: #9a4c2c;
+  --bs-btn-active-border-color: #9a4c2c;
+  --bs-btn-focus-shadow-rgb: 197, 104, 63;
+  font-weight: 600;
+  border-radius: var(--cnd-radius-sm);
+}
+
+.btn-success {
+  --bs-btn-bg: var(--cnd-salvia);
+  --bs-btn-border-color: var(--cnd-salvia);
+  --bs-btn-hover-bg: #4d7559;
+  --bs-btn-hover-border-color: #4d7559;
+  border-radius: var(--cnd-radius-sm);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--cnd-terracota);
+  --bs-btn-border-color: var(--cnd-terracota);
+  --bs-btn-hover-bg: var(--cnd-terracota);
+  --bs-btn-hover-border-color: var(--cnd-terracota);
+  border-radius: var(--cnd-radius-sm);
+}
+
+.btn {
+  border-radius: var(--cnd-radius-sm);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   6) CARDS / PANELES
+   --------------------------------------------------------------------------- */
+.card {
+  border: 1px solid rgba(27, 36, 48, 0.07);
+  border-radius: var(--cnd-radius);
+  box-shadow: var(--cnd-shadow-card);
+}
+
+.card-header {
+  font-family: var(--cnd-font-display);
+  font-weight: 700;
+  background: var(--cnd-crema-2);
+  border-bottom: 1px solid rgba(27, 36, 48, 0.07);
+  border-radius: var(--cnd-radius) var(--cnd-radius) 0 0 !important;
+}
+
+/* Cards oscuras tipo dashboard (pkg-card del panel) conservan su fondo
+   oscuro propio definido inline; solo afinamos el acento */
+.pkg-card {
+  border-color: rgba(197, 104, 63, 0.18) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   7) TABLAS
+   --------------------------------------------------------------------------- */
+.table {
+  border-radius: var(--cnd-radius-sm);
+  overflow: hidden;
+}
+
+.table thead.table-dark th,
+.table > :not(caption) > * > th {
+  background-color: var(--cnd-noche) !important;
+  color: var(--cnd-crema) !important;
+  font-family: var(--cnd-font-display);
+  font-weight: 600;
+  letter-spacing: .02em;
+  border-color: var(--cnd-noche);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: var(--cnd-crema-2);
+}
+
+.table-hover > tbody > tr:hover > * {
+  background-color: rgba(197, 104, 63, 0.08);
+}
+
+/* ---------------------------------------------------------------------------
+   8) BADGES / ETIQUETAS DE ESTADO
+   --------------------------------------------------------------------------- */
+.badge {
+  font-weight: 600;
+  border-radius: 7px;
+  letter-spacing: .01em;
+}
+
+.badge.bg-success { background-color: var(--cnd-salvia) !important; }
+.badge.bg-danger  { background-color: var(--cnd-rojo-aviso) !important; }
+.badge.bg-warning { background-color: var(--cnd-dorado) !important; color: #2b2310 !important; }
+.badge.bg-primary { background-color: var(--cnd-terracota) !important; }
+.badge.bg-info    { background-color: var(--cnd-azul-cielo) !important; }
+
+/* ---------------------------------------------------------------------------
+   9) ALERTAS
+   --------------------------------------------------------------------------- */
+.alert {
+  border-radius: var(--cnd-radius-sm);
+  border-left: 4px solid transparent;
+}
+.alert-success { border-left-color: var(--cnd-salvia); }
+.alert-danger   { border-left-color: var(--cnd-rojo-aviso); }
+.alert-warning  { border-left-color: var(--cnd-dorado); }
+.alert-info     { border-left-color: var(--cnd-azul-cielo); }
+
+/* ---------------------------------------------------------------------------
+   10) FORMULARIOS
+   --------------------------------------------------------------------------- */
+.form-control,
+.form-select {
+  border-radius: var(--cnd-radius-sm);
+  border-color: rgba(27, 36, 48, 0.15);
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--cnd-terracota);
+  box-shadow: 0 0 0 0.2rem rgba(197, 104, 63, 0.18);
+}
+
+.input-group .btn {
+  border-radius: 0 var(--cnd-radius-sm) var(--cnd-radius-sm) 0;
+}
+
+/* ---------------------------------------------------------------------------
+   11) PÁGINA DE LOGIN
+   --------------------------------------------------------------------------- */
+.card-login {
+  font-family: var(--cnd-font-body);
+}
+
+/* ---------------------------------------------------------------------------
+   12) PAGINACIÓN
+   --------------------------------------------------------------------------- */
+.pagination .page-link {
+  border-radius: 8px;
+  margin: 0 2px;
+  color: var(--cnd-noche);
+}
+.pagination .page-item.active .page-link {
+  background-color: var(--cnd-terracota);
+  border-color: var(--cnd-terracota);
+}
+
+/* ---------------------------------------------------------------------------
+   13) SCROLLBAR GENERAL (estético, no afecta funcionalidad)
+   --------------------------------------------------------------------------- */
+::-webkit-scrollbar { height: 8px; width: 8px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(27, 36, 48, 0.22);
+  border-radius: 6px;
+}
+
+/* ---------------------------------------------------------------------------
+   14) PANEL DE CONTROL (resources/views/panel/index.blade.php)
+   Retinta los gradientes de cada paquete y los "stat-pill" a la paleta
+   residencial cálida, sin tocar el HTML ni la estructura de colapsables.
+   --------------------------------------------------------------------------- */
+.dark-page .hdr-p1 { background: linear-gradient(120deg, #1b2430 0%, var(--cnd-azul-cielo) 120%) !important; }
+.dark-page .hdr-p2 { background: linear-gradient(120deg, #1d3a2a 0%, var(--cnd-salvia) 120%) !important; }
+.dark-page .hdr-p3 { background: linear-gradient(120deg, #5a2c1a 0%, var(--cnd-terracota) 120%) !important; }
+.dark-page .hdr-p4 { background: linear-gradient(120deg, #3a2a1a 0%, var(--cnd-dorado) 120%) !important; }
+
+.dark-page .stat-pill {
+  background: var(--cnd-noche-3) !important;
+  border-color: rgba(212, 162, 76, 0.25) !important;
+}
+
+.dark-page .badge-done {
+  background: rgba(95, 141, 110, 0.18) !important;
+  color: var(--cnd-salvia-claro) !important;
+  border-color: rgba(95, 141, 110, 0.4) !important;
+}
+
+.dark-page .pkg-card {
+  background: var(--cnd-noche-2) !important;
+}

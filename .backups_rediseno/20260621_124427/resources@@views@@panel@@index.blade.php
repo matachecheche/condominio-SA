@@ -99,7 +99,7 @@
     <div class="d-flex align-items-end justify-content-between mt-4 mb-1">
         <div>
             <h2 class="fw-bold text-light mb-1" style="letter-spacing:-.01em;">
-                🏡 Panel de Control
+                🏢 Panel de Control
             </h2>
             <p class="text-secondary mb-0" style="font-size:.875rem;">
                 Sistema de Gestión — Condominio San Diego · Módulos por paquete

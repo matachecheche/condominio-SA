@@ -8,7 +8,7 @@
 
     <!-- LOGO -->
     <a class="navbar-brand fw-bold text-uppercase" href="{{ route('panel') }}">
-        🏡 Condominio San Diego
+        🏢 Condominio San Diego
     </a>
 
     <!-- BUSCADOR (OCULTO) -->

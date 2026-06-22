@@ -600,14 +600,25 @@ class VisitaController extends Controller
     }
 
     // Método privado para registrar en bitácora
+    /**
+     * Registra una acción en la bitácora. Si el registro falla por
+     * cualquier motivo (ej. el mensaje sigue siendo demasiado largo para
+     * la columna), solo se loguea el error: la operación principal
+     * (registrar salida, crear visita, etc.) no debe verse interrumpida
+     * por un problema de auditoría secundario.
+     */
     private function registrarBitacora($accion, $descripcion, $id_operacion = null)
     {
-        Bitacora::create([
-            'user_id' => Auth::id(),
-            'accion' => $accion . ' - ' . $descripcion,
-            'fecha_hora' => Carbon::now(),
-            'id_operacion' => $id_operacion,
-            'ip' => request()->ip(),
-        ]);
+        try {
+            Bitacora::create([
+                'user_id' => Auth::id(),
+                'accion' => $accion . ' - ' . $descripcion,
+                'fecha_hora' => Carbon::now(),
+                'id_operacion' => $id_operacion,
+                'ip' => request()->ip(),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al registrar en bitácora (VisitaController): ' . $e->getMessage());
+        }
     }
 }

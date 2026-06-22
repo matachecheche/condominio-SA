@@ -13,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Esto soluciona el problema del puerto en Codespaces
         $middleware->trustProxies(at: '*');
+
+        // Stripe llama directo a esta URL sin token CSRF de Laravel.
+        $middleware->validateCsrfTokens(except: ['stripe/webhook']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -38,6 +38,8 @@
     <script src="{{ asset('js/scripts.js') }}"></script>
     @stack('js')
 
+    @include('components.voice-assistant')
+
 </body>
 
 

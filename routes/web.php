@@ -30,6 +30,7 @@ use App\Http\Controllers\IncidenciaController;
 use App\Http\Controllers\ReclamoController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\VoiceCommandController;
 use App\Models\Bitacora;
 
 // ── Recuperación de contraseña ────────────────────────────────────────────────
@@ -92,6 +93,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/stripe/success/{cuota}', [PagoController::class, 'stripeSuccess'])->name('pagos.stripe.success');
     Route::get('/stripe/cancel', fn() => redirect()->route('pagos.mis_cuotas')->with('error', 'Pago cancelado.'))->name('pagos.stripe.cancel');
 });
+
+// Webhook de Stripe (sin auth ni CSRF — Stripe llama directo a esta URL).
+Route::post('/stripe/webhook', [PagoController::class, 'webhook'])->name('stripe.webhook');
 
 // ── CU8 — Áreas comunes y Reservas ───────────────────────────────────────────
 Route::middleware(['auth'])->group(function () {
@@ -192,3 +196,6 @@ Route::post('/bitacora/page-close', function () {
     }
     return response()->noContent();
 })->middleware('web')->name('bitacora.page-close');
+
+// ── Asistente de voz (navegación por comandos hablados) ───────────────────────
+Route::middleware(['auth'])->post('/voice-command', [VoiceCommandController::class, 'handle'])->name('voice-command');

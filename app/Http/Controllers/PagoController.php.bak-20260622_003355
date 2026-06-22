@@ -137,34 +137,9 @@ class PagoController extends Controller
         ]);
     }
 
-    /**
-     * CU7 — Pago de multa: muestra las opciones de pago (QR / Stripe)
-     * para una multa específica. Restaurado: este método existía antes
-     * y fue borrado accidentalmente por un script anterior.
-     */
-    public function createMulta($multaId)
-    {
-        $multa = Multa::with('pagos')->findOrFail($multaId);
 
-        // Solo el residente o empleado al que corresponde puede pagar
-        $user = auth()->user();
-        $esResidente = $user->residente_id && $user->residente_id === $multa->residente_id;
-        $esEmpleado  = $user->empleado_id  && $user->empleado_id  === $multa->empleado_id;
 
-        if (! ($esResidente || $esEmpleado)) {
-            abort(403);
-        }
 
-        // Generar contenido QR
-        $contenidoQr = urlencode("Pago de multa\nMotivo: {$multa->motivo}\nMonto: Bs {$multa->monto}");
-        $qrBase64    = "https://api.qrserver.com/v1/create-qr-code/?data={$contenidoQr}&size=200x200";
-
-        return view('pagos.opciones_pago', [
-            'entidad' => $multa,
-            'tipo' => 'multa',
-            'qrBase64' => $qrBase64
-        ]);
-    }
 
     public function pagoQR(Request $request)
     {
@@ -192,50 +167,6 @@ class PagoController extends Controller
         ]);
 
         return redirect()->route('pagos.mis_cuotas')->with('success', 'Comprobante enviado. Esperando validación.');
-    }
-
-    /**
-     * CU7 — Pago de multa por QR/comprobante. Restaurado: este método
-     * existía antes y fue borrado accidentalmente por un script anterior.
-     */
-    public function pagoQRMulta(Request $request)
-    {
-        $request->validate([
-            'multa_id'    => 'required|exists:multas,id',
-            'comprobante' => 'required|image|max:2048',
-        ]);
-
-        $multa = Multa::findOrFail($request->multa_id);
-        $user  = auth()->user();
-
-        // Sólo el residente o empleado al que se la multa pertenece puede subir comprobante
-        $esResidente = $user->residente_id && $user->residente_id === $multa->residente_id;
-        $esEmpleado  = $user->empleado_id  && $user->empleado_id  === $multa->empleado_id;
-        if (! ($esResidente || $esEmpleado) ) {
-            abort(403, 'No autorizado.');
-        }
-
-        // Guardar archivo
-        $ruta = $request->file('comprobante')->store('comprobantes/multas', 'public');
-
-        // Crear el pago
-        Pago::create([
-            'multa_id'     => $multa->id,
-            'user_id'      => $user->id,
-            'monto_pagado' => $multa->monto,
-            'fecha_pago'   => now(),
-            'metodo'       => 'QR',
-            'estado'       => 'pendiente',
-            'comprobante'  => $ruta,
-        ]);
-
-        $multa->estado = 'pendiente';
-        $multa->save();
-        $this->registrarEnBitacora('Comprobante de multa enviado', $multa->id);
-
-        return redirect()
-            ->route('multas.index')
-            ->with('success', 'Comprobante de multa enviado. Esperando validación.');
     }
 
     /** Cliente de Stripe usando la clave secreta configurada en services.php. */

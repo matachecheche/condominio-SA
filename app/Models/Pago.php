@@ -19,6 +19,8 @@ class Pago extends Model
         'observacion',
         'user_id',
         'multa_id',
+        'stripe_session_id',
+        'stripe_payment_intent_id',
     ];
 
 public function cuota()

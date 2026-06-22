@@ -33,6 +33,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Stripe (CU7 — Pago de cuotas y multas con tarjeta)
+    |--------------------------------------------------------------------------
+    | Claves de prueba: https://dashboard.stripe.com/test/apikeys
+    | El webhook_secret se obtiene con `stripe listen` (local) o desde el
+    | dashboard de Stripe (producción/nube).
+    */
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'currency' => env('STRIPE_CURRENCY', 'bob'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | OpenAI (CU12 — Reportes por voz/texto)
     |--------------------------------------------------------------------------
     | Whisper transcribe el audio y el modelo de chat interpreta la instrucción

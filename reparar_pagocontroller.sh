@@ -1,3 +1,45 @@
+#!/usr/bin/env bash
+# ============================================================================
+# reparar_pagocontroller.sh
+#
+# PROBLEMA: el script anterior (solucionar_pagos_y_voz.sh) tenía un bug en
+# el paso que reescribía los métodos de Stripe: el patrón de texto que
+# buscaba para saber "dónde termina el bloque viejo" no coincidía 100% con
+# tu PagoController.php real, y terminó borrando por accidente los métodos
+# createMulta() y pagoQRMulta() (que estaban físicamente entre medio de los
+# métodos de Stripe). Por eso "Pagar multa" tira BadMethodCallException.
+#
+# QUÉ HACE ESTE SCRIPT:
+#   1. Hace un backup de tu PagoController.php actual
+#      (app/Http/Controllers/PagoController.php.bak-FECHA)
+#   2. Reemplaza el archivo completo por una versión corregida que tiene
+#      TODO lo que ya tenías funcionando (Stripe seguro, Registrar Pago
+#      con multas, etc.) MÁS createMulta() y pagoQRMulta() restaurados.
+#
+# No toca rutas, vistas, ni el asistente de voz — eso ya estaba bien.
+#
+# Ejecutar desde la raíz del proyecto (donde está 'artisan').
+# ============================================================================
+set -e
+
+if [ ! -f "artisan" ]; then
+    echo "ERROR: no se encontró 'artisan' en el directorio actual."
+    echo "Ejecuta este script desde la raíz del proyecto Laravel."
+    exit 1
+fi
+
+CONTROLLER="app/Http/Controllers/PagoController.php"
+
+if [ ! -f "$CONTROLLER" ]; then
+    echo "ERROR: no se encontró $CONTROLLER"
+    exit 1
+fi
+
+BACKUP="${CONTROLLER}.bak-$(date +%Y%m%d_%H%M%S)"
+cp "$CONTROLLER" "$BACKUP"
+echo "Backup creado: $BACKUP"
+
+cat > "$CONTROLLER" <<'PHPEOF'
 <?php
 
 namespace App\Http\Controllers;
@@ -548,3 +590,40 @@ class PagoController extends Controller
         return redirect()->route('pagos.index')->with('success', $mensaje);
     }
 }
+PHPEOF
+
+echo "PagoController.php reemplazado con la versión corregida."
+echo ""
+
+# Verificación básica de sintaxis si PHP está disponible
+if command -v php >/dev/null 2>&1; then
+    if php -l "$CONTROLLER" > /tmp/lint_out.txt 2>&1; then
+        echo "✔ Verificación de sintaxis PHP: OK"
+    else
+        echo "✘ ERROR de sintaxis detectado:"
+        cat /tmp/lint_out.txt
+        echo ""
+        echo "Restaurando backup automáticamente por seguridad..."
+        cp "$BACKUP" "$CONTROLLER"
+        exit 1
+    fi
+else
+    echo "(php no encontrado en PATH para verificar sintaxis, pero el archivo fue escrito)"
+fi
+
+echo ""
+echo "Limpiando cachés de Laravel..."
+php artisan config:clear  2>/dev/null || true
+php artisan route:clear   2>/dev/null || true
+php artisan view:clear    2>/dev/null || true
+
+echo ""
+echo "== Listo =="
+echo ""
+echo "Métodos restaurados: createMulta(), pagoQRMulta()"
+echo "Todo lo demás (Stripe seguro, Registrar Pago con multas, voz) queda igual."
+echo ""
+echo "Probá ahora:"
+echo "  1. Como residente: Multas → Pagar (createMulta debería cargar sin error)"
+echo "  2. Pagar con tarjeta (Stripe) — necesitas tus claves reales en .env"
+echo "  3. Subir comprobante QR de una multa (pagoQRMulta)"

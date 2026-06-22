@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^2.1",
+        "fakerphp/faker": "^1.23",
         "jeroennoten/laravel-adminlte": "^3.11",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
@@ -15,7 +16,6 @@
         "stripe/stripe-php": "^20.1"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
         "laravel-lang/common": "^6.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",

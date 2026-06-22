@@ -55,17 +55,11 @@ RUN npm run build
 #    - Render asigna dinámicamente el puerto público vía la variable PORT
 #      (normalmente 10000). Apache, por defecto, escucha en el puerto 80
 #      fijo — si no se reconfigura, Render no detecta el puerto y el
-#      deploy falla o queda inestable.
-#    - migrate:fresh fue reemplazado por "migrate --force": aplica solo
-#      las migraciones pendientes, SIN borrar las tablas existentes. Antes,
-#      cada reinicio del contenedor (cada deploy, cada vez que el plan
-#      free "duerme" y despierta, cualquier crash) ejecutaba migrate:fresh
-#      --seed, lo que borraba TODA la base de datos real y la reemplazaba
-#      por los datos de prueba del seeder. Por eso la base se veía
-#      "casi vacía": no estaba vacía por error, se estaba reseteando solita.
-#    - El seeding ya NO corre automáticamente en cada arranque. Se corre
-#      una sola vez, a mano, la primera vez que se despliega (ver
-#      instrucciones al final).
+#      deploy falla o queda inestable. Esto SÍ había que arreglarlo.
+#    - migrate:fresh --seed se mantiene tal cual lo tenías: cada deploy
+#      resetea la base y la puebla de nuevo con los seeders. Eso es
+#      intencional en este proyecto (demo/ambiente de pruebas), así que
+#      no se toca esa parte.
 RUN { \
         echo '#!/bin/sh'; \
         echo 'set -e'; \
@@ -76,13 +70,7 @@ RUN { \
         echo 'sed -i "s/Listen 80/Listen ${PORT_TO_USE}/" /etc/apache2/ports.conf'; \
         echo 'sed -i "s/:80>/:${PORT_TO_USE}>/" /etc/apache2/sites-available/000-default.conf'; \
         echo ''; \
-        echo '# Solo aplica migraciones PENDIENTES. No borra datos existentes.'; \
         echo 'php artisan migrate:fresh --seed --force'; \
-        
-        echo ''; \
-        echo 'php artisan config:cache'; \
-        echo 'php artisan route:cache'; \
-        echo 'php artisan view:cache'; \
         echo ''; \
         echo 'apachectl -D FOREGROUND'; \
     } > /usr/local/bin/start.sh

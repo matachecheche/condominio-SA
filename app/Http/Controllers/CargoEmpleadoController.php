@@ -38,9 +38,20 @@ class CargoEmpleadoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate(['cargo' => 'required|string|max:255']);
+        // Se añade la validación del estado conservando la del nombre del cargo
+        $request->validate([
+            'cargo' => 'required|string|max:255',
+            'estado' => 'required|in:0,1'
+        ]);
+
         $cargo = CargoEmpleado::findOrFail($id);
-        $cargo->update(['cargo' => $request->cargo]);
+        
+        // Se actualizan ambos campos en la base de datos
+        $cargo->update([
+            'cargo' => $request->cargo,
+            'estado' => $request->estado
+        ]);
+        
         $this->registrarEnBitacora('Actualizó cargo de empleado: ' . $cargo->cargo, $cargo->id);
 
         return redirect()->route('cargos.index')->with('success', 'Cargo actualizado correctamente.');

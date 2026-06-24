@@ -199,3 +199,5 @@ Route::post('/bitacora/page-close', function () {
 
 // ── Asistente de voz (navegación por comandos hablados) ───────────────────────
 Route::middleware(['auth'])->post('/voice-command', [VoiceCommandController::class, 'handle'])->name('voice-command');
+
+Route::get('/buscar-global', [App\Http\Controllers\HomeController::class, 'buscarGlobal'])->name('buscar.global');

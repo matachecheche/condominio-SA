@@ -9,10 +9,16 @@
         🏡 Condominio San Diego
     </a>
 
-    <form class="d-none d-md-inline-block form-inline ms-auto me-3 my-2" hidden>
+    <form action="{{ route('buscar.global') }}" method="GET" class="d-none d-md-inline-block form-inline ms-auto me-3 my-2">
         <div class="input-group">
-            <input class="form-control bg-dark text-white border-secondary" type="text" placeholder="Buscar..." />
-            <button class="btn btn-outline-light" type="button">
+            <input class="form-control text-white border-secondary small" 
+                   style="background: #111827;"
+                   name="query" 
+                   type="text" 
+                   placeholder="Buscar casa, residente..." 
+                   value="{{ request('query') }}"
+                   required />
+            <button class="btn btn-primary" type="submit">
                 <i class="fas fa-search"></i>
             </button>
         </div>

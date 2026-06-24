@@ -1,112 +1,127 @@
 @extends('plantilla')
+
 @section('title', 'Incidencias')
-@push('css')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@endpush
+
 @section('content')
-@if(session('success'))
-<script>
-    Swal.mixin({toast:true,position:'top-end',showConfirmButton:false,timer:2500,timerProgressBar:true})
-        .fire({icon:'success',title:@json(session('success'))});
-</script>
-@endif
-
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Denuncias e Incidencias</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('panel') }}">Inicio</a></li>
-        <li class="breadcrumb-item active">Incidencias</li>
-    </ol>
-
-    <div class="mb-3">
-        <a href="{{ route('incidencias.create') }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus me-1"></i> Nueva Incidencia
+<div class="container-fluid px-4 py-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1 fs-2">Denuncias e Incidencias</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="{{ route('panel') }}" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item active">Incidencias</li>
+                </ol>
+            </nav>
+        </div>
+        <a href="{{ route('incidencias.create') }}" class="btn btn-primary shadow-sm px-3 d-inline-flex align-items-center gap-2">
+            <i class="fas fa-plus-circle"></i> Nueva Incidencia
         </a>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-header"><i class="fas fa-flag me-1"></i> CU16 · Gestionar Denuncias / Reportes de Incidencias</div>
-        <div class="card-body">
-            <form method="GET" action="{{ route('incidencias.index') }}" class="mb-3">
-                <div class="row g-2">
-                    <div class="col-md-4">
-                        <input type="text" name="search" class="form-control form-control-sm"
-                               placeholder="N° seguimiento, título o residente..." value="{{ request('search') }}">
-                    </div>
-                    <div class="col-md-2">
-                        <select name="estado" class="form-select form-select-sm">
-                            <option value="">Todos los estados</option>
-                            @foreach(['pendiente','en_revision','resuelto','cerrado'] as $est)
-                            <option value="{{ $est }}" {{ request('estado')==$est?'selected':'' }}>{{ ucfirst(str_replace('_',' ',$est)) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-auto">
-                        <button class="btn btn-outline-primary btn-sm" type="submit">Filtrar</button>
-                        <a href="{{ route('incidencias.index') }}" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+    <!-- Barra de Búsqueda y Filtros -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-3 bg-light rounded-3">
+            <form method="GET" action="{{ route('incidencias.index') }}" class="row g-2 align-items-center">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0" placeholder="Seguimiento, título o residente..." value="{{ request('search') }}">
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <select name="estado" class="form-select">
+                        <option value="">Todos los estados</option>
+                        @foreach(['pendiente','en_revision','resuelto','cerrado'] as $est)
+                            <option value="{{ $est }}" {{ request('estado')==$est?'selected':'' }}>{{ ucfirst(str_replace('_',' ',$est)) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button class="btn btn-primary px-4 shadow-sm" type="submit">Filtrar</button>
+                    <a href="{{ route('incidencias.index') }}" class="btn btn-outline-secondary">Limpiar</a>
+                </div>
             </form>
+        </div>
+    </div>
 
-            <table class="table table-striped table-sm">
-                <thead class="table-dark">
-                    <tr>
-                        <th>N° Seguimiento</th>
-                        <th>Título</th>
-                        <th>Residente</th>
-                        <th>Prioridad</th>
-                        <th>Estado</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($incidencias as $inc)
-                    <tr>
-                        <td><code>{{ $inc->numero_seguimiento }}</code></td>
-                        <td>{{ Str::limit($inc->titulo, 40) }}</td>
-                        <td>{{ $inc->residente->nombre }} {{ $inc->residente->apellido }}</td>
-                        <td>
-                            @php $pc = ['baja'=>'bg-info','media'=>'bg-warning text-dark','alta'=>'bg-danger'] @endphp
-                            <span class="badge {{ $pc[$inc->prioridad] ?? 'bg-secondary' }}">{{ ucfirst($inc->prioridad) }}</span>
-                        </td>
-                        <td>
-                            @php $ec = ['pendiente'=>'bg-warning text-dark','en_revision'=>'bg-primary','resuelto'=>'bg-success','cerrado'=>'bg-secondary'] @endphp
-                            <span class="badge {{ $ec[$inc->estado] ?? 'bg-secondary' }}">{{ ucfirst(str_replace('_',' ',$inc->estado)) }}</span>
-                        </td>
-                        <td>{{ $inc->created_at->format('d/m/Y') }}</td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <a href="{{ route('incidencias.show', $inc->id) }}" class="btn btn-info">Ver</a>
-                                <a href="{{ route('incidencias.edit', $inc->id) }}" class="btn btn-warning">Editar</a>
-                                <button type="button" class="btn btn-danger"
-                                        data-bs-toggle="modal" data-bs-target="#delInc-{{ $inc->id }}">Eliminar</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <div class="modal fade" id="delInc-{{ $inc->id }}" tabindex="-1">
-                        <div class="modal-dialog"><div class="modal-content">
-                            <div class="modal-header"><h5 class="modal-title">Eliminar Incidencia</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                            <div class="modal-body">¿Eliminar la incidencia <strong>{{ $inc->numero_seguimiento }}</strong>?</div>
-                            <div class="modal-footer">
-                                <form action="{{ route('incidencias.destroy', $inc->id) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                                </form>
-                                <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                            </div>
-                        </div></div>
-                    </div>
-                    @empty
-                    <tr><td colspan="7" class="text-center text-muted">No hay incidencias registradas.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-            <div class="d-flex justify-content-center mt-2">
-                {{ $incidencias->appends(request()->query())->links() }}
+    <!-- Tabla -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-uppercase fs-7 text-secondary">
+                        <tr>
+                            <th class="py-3 px-4">N° Seguimiento</th>
+                            <th class="py-3">Título</th>
+                            <th class="py-3">Residente</th>
+                            <th class="py-3">Prioridad</th>
+                            <th class="py-3">Estado</th>
+                            <th class="py-3">Fecha</th>
+                            <th class="py-3 text-end px-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($incidencias as $inc)
+                        <tr>
+                            <td class="py-3 px-4 text-primary fw-bold font-monospace">{{ $inc->numero_seguimiento }}</td>
+                            <td class="py-3 fw-medium text-dark">{{ Str::limit($inc->titulo, 40) }}</td>
+                            <td class="py-3 text-secondary">{{ $inc->residente->nombre }} {{ $inc->residente->apellido }}</td>
+                            <td class="py-3">
+                                @php $pc = ['baja'=>'bg-info','media'=>'bg-warning','alta'=>'bg-danger'] @endphp
+                                <span class="badge {{ $pc[$inc->prioridad] ?? 'bg-secondary' }} text-white px-2 py-1 rounded-pill fs-7">{{ ucfirst($inc->prioridad) }}</span>
+                            </td>
+                            <td class="py-3">
+                                @php $ec = ['pendiente'=>'bg-warning text-dark','en_revision'=>'bg-primary','resuelto'=>'bg-success','cerrado'=>'bg-secondary'] @endphp
+                                <span class="badge {{ $ec[$inc->estado] ?? 'bg-secondary' }} px-2 py-1 rounded-pill fs-7">{{ ucfirst(str_replace('_',' ',$inc->estado)) }}</span>
+                            </td>
+                            <td class="py-3 text-secondary small">{{ $inc->created_at->format('d/m/Y') }}</td>
+                            <td class="py-3 text-end px-4">
+                                <div class="d-inline-flex gap-1">
+                                    <a href="{{ route('incidencias.show', $inc->id) }}" class="btn btn-outline-info btn-sm" title="Ver"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('incidencias.edit', $inc->id) }}" class="btn btn-outline-warning btn-sm text-dark" title="Editar"><i class="fas fa-edit"></i></a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmarEliminarIncidencia({{ $inc->id }}, '{{ $inc->numero_seguimiento }}')" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    <form id="delete-form-{{ $inc->id }}" action="{{ route('incidencias.destroy', $inc->id) }}" method="POST" class="d-none">
+                                        @csrf @method('DELETE')
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="7" class="text-center py-5 text-muted">No se encontraron incidencias.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
+        </div>
+        <div class="card-footer bg-white border-top border-light py-3 d-flex justify-content-center">
+            {{ $incidencias->appends(request()->query())->links() }}
         </div>
     </div>
 </div>
+
+<script>
+    @if(session('success'))
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: "{{ session('success') }}", showConfirmButton: false, timer: 2500 });
+    @endif
+
+    function confirmarEliminarIncidencia(id, num) {
+        Swal.fire({
+            title: '¿Eliminar incidencia?',
+            text: `Se eliminará permanentemente el reporte ${num}`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, borrar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        });
+    }
+</script>
 @endsection

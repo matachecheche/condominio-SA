@@ -2,141 +2,122 @@
 
 @section('title', 'Panel de Multas')
 
-@push('css')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@endpush
-
 @section('content')
-@if (session('success'))
-<script>
-    Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "success",
-        title: "{{ session('success') }}",
-        showConfirmButton: false,
-        timer: 1500
-    });
-</script>
-@endif
-
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Panel de Multas</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('panel') }}">Inicio</a></li>
-        <li class="breadcrumb-item active">Multas</li>
-    </ol>
-
-    {{-- Solo administradores pueden crear nuevas multas --}}
-    @if(auth()->check() && !auth()->user()->residente_id && !auth()->user()->empleado_id)
-    <div class="mb-4">
-        <a href="{{ route('multas.create') }}" class="btn btn-primary btn-sm">Nueva Multa</a>
+<div class="container-fluid px-4 py-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1 fs-2">Panel de Multas</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="{{ route('panel') }}" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item active">Multas</li>
+                </ol>
+            </nav>
+        </div>
+        
+        @if(auth()->check() && !auth()->user()->residente_id && !auth()->user()->empleado_id)
+            <a href="{{ route('multas.create') }}" class="btn btn-primary shadow-sm px-3">
+                <i class="fas fa-plus me-2"></i> Nueva Multa
+            </a>
+        @endif
     </div>
-    @endif
 
-    <div class="card mb-4">
-        <div class="card-header"><i class="fas fa-table me-1"></i> Tabla Multas</div>
-        <div class="card-body table-responsive">
-            <table id="datatablesMultas" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Motivo</th>
-                        <th>Monto (Bs.)</th>
-                        <th>Emitida</th>
-                        <th>Vencimiento</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($multas as $multa)
-                    <tr>
-                        <td>
-                            {{ optional($multa->residente)->nombre_completo
-                            ?? optional($multa->empleado)->nombre_completo
-                            ?? 'N/A' }}
-                        </td>
-                        <td>{{ $multa->motivo }}</td>
-                        <td>{{ number_format($multa->monto, 2) }}</td>
-                        <td>{{ \Carbon\Carbon::parse($multa->fechaEmision)->format('d/m/Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($multa->fechaLimite)->format('d/m/Y') }}</td>
-                        <td>
-                            <span class="badge
-                                @if($multa->estado == 'pendiente') bg-warning text-dark
-                                @elseif($multa->estado == 'pagada') bg-success
-                                @elseif($multa->estado == 'anulada') bg-danger
-                                @elseif($multa->estado == 'apelada') bg-info text-dark
-                                @else bg-secondary text-white
-                                @endif">
-                                {{ ucfirst($multa->estado) }}
-                            </span>
-                        </td>
-                        <td>
+    <!-- Tabla -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="datatablesMultas" class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-uppercase fs-7 text-secondary">
+                        <tr>
+                            <th class="py-3 px-4">Usuario</th>
+                            <th class="py-3">Motivo</th>
+                            <th class="py-3 text-center">Monto (Bs.)</th>
+                            <th class="py-3">Fechas</th>
+                            <th class="py-3 text-center">Estado</th>
+                            <th class="py-3 text-end px-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($multas as $multa)
+                        <tr>
+                            <td class="py-3 px-4 fw-medium text-dark">
+                                {{ optional($multa->residente)->nombre_completo ?? optional($multa->empleado)->nombre_completo ?? 'N/A' }}
+                            </td>
+                            <td class="py-3 text-secondary">{{ $multa->motivo }}</td>
+                            <td class="py-3 text-center fw-bold">{{ number_format($multa->monto, 2) }}</td>
+                            <td class="py-3 small text-muted">
+                                <div><small>Emitida:</small> {{ \Carbon\Carbon::parse($multa->fechaEmision)->format('d/m/Y') }}</div>
+                                <div><small>Límite:</small> {{ \Carbon\Carbon::parse($multa->fechaLimite)->format('d/m/Y') }}</div>
+                            </td>
+                            <td class="py-3 text-center">
+                                @php 
+                                    $states = ['pendiente'=>'bg-warning text-dark', 'pagada'=>'bg-success text-white', 'anulada'=>'bg-danger text-white', 'apelada'=>'bg-info text-white'];
+                                @endphp
+                                <span class="badge {{ $states[$multa->estado] ?? 'bg-secondary' }} px-2 py-1 rounded-pill">
+                                    {{ ucfirst($multa->estado) }}
+                                </span>
+                            </td>
+                            <td class="py-3 text-end px-4">
+                                <div class="d-flex justify-content-end gap-1">
+                                    @if(auth()->check() && (auth()->user()->residente_id || auth()->user()->empleado_id) && $multa->estado == 'pendiente')
+                                        <a href="{{ route('pagos.create.multa', ['multa' => $multa->id]) }}" class="btn btn-outline-success btn-sm"><i class="fas fa-money-bill-wave me-1"></i>Pagar</a>
+                                    @endif
+                                    
+                                    @if(auth()->check() && (auth()->user()->residente_id || auth()->user()->empleado_id) && $multa->estado == 'pagada' && $multa->pagos->isNotEmpty())
+                                        <a href="{{ route('pagos.comprobante', $multa->pagos->first()->id) }}" class="btn btn-outline-primary btn-sm" target="_blank"><i class="fas fa-file-invoice me-1"></i>Ver</a>
+                                    @endif
 
-                            <div class="btn-group" role="group">
-                                {{-- Botón “Pagar” para residentes y empleados --}}
-                                @if(auth()->check() && (auth()->user()->residente_id || auth()->user()->empleado_id) && $multa->estado == 'pendiente')
-                                <a href="{{ route('pagos.create.multa', ['multa' => $multa->id]) }}"
-                                    class="btn btn-success btn-sm me-1">
-                                    Pagar
-                                </a>
-                                @endif
-                                @if(auth()->check() && (auth()->user()->residente_id || auth()->user()->empleado_id) && $multa->estado == 'pagada' && $multa->pagos->isNotEmpty())
-                                    <a href="{{ route('pagos.comprobante', $multa->pagos->first()->id) }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                                        Ver Comprobante
-                                    </a>
-                                @endif
-
-                                {{-- Solo administradores pueden editar/anular --}}
-                                @if(auth()->check() && !auth()->user()->residente_id && !auth()->user()->empleado_id)
-                                <a href="{{ route('multas.edit', $multa->id) }}" class="btn btn-warning btn-sm me-1">Editar</a>
-                                <!-- Botón Anular -->
-                                <form action="{{ route('multas.destroy', $multa->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminar-{{ $multa->id }}">
-                                        Eliminar</button>
-                                </form>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Modal de confirmación de eliminación -->
-                    <div class="modal fade" id="confirmarEliminar-{{ $multa->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmarEliminarLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Eliminar multa</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    @if(auth()->check() && !auth()->user()->residente_id && !auth()->user()->empleado_id)
+                                        <a href="{{ route('multas.edit', $multa->id) }}" class="btn btn-outline-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmarEliminar({{ $multa->id }}, '{{ optional($multa->residente)->nombre_completo ?? 'Usuario' }}')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $multa->id }}" action="{{ route('multas.destroy', $multa->id) }}" method="POST" class="d-none">
+                                            @csrf @method('DELETE')
+                                        </form>
+                                    @endif
                                 </div>
-                                <div class="modal-body">
-                                    ¿Desea eliminar la multa emitida a: {{ optional($multa->residente)->nombre_completo ?? optional($multa->empleado)->nombre_completo ?? 'N/A' }}?
-                                </div>
-                                <div class="modal-footer">
-                                    <form action="{{ route('multas.destroy', $multa->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-primary btn-sm">Aceptar</button>
-                                    </form>
-                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
-@endsection
 
-@push('js')
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"></script>
 <script>
     window.addEventListener('DOMContentLoaded', () => {
-        new simpleDatatables.DataTable("#datatablesMultas");
+        new simpleDatatables.DataTable("#datatablesMultas", {
+            labels: {
+                placeholder: "Buscar...",
+                perPage: "entradas por página",
+                noRows: "No se encontraron registros",
+                info: "Mostrando {start} a {end} de {rows} entradas",
+            }
+        });
     });
+
+    @if(session('success'))
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: "{{ session('success') }}", showConfirmButton: false, timer: 2000 });
+    @endif
+
+    function confirmarEliminar(id, nombre) {
+        Swal.fire({
+            title: '¿Eliminar multa?',
+            text: `Se anulará la multa de ${nombre}`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) { document.getElementById('delete-form-' + id).submit(); }
+        });
+    }
 </script>
-@endpush
+@endsection

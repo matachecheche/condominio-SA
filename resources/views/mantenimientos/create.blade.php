@@ -1,74 +1,142 @@
-@extends('layouts.ap')
+@extends('plantilla')
+
+@section('title', 'Registrar Mantenimiento')
+
 @section('content')
-<div class="container">
-    <h2 class="mb-4">Registrar Nuevo Mantenimiento</h2>
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+<div class="container-fluid px-4 py-4">
+    <!-- Encabezado y Navegación -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1 fs-3">Registrar Nuevo Mantenimiento</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="{{ route('panel') }}" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('mantenimientos.index') }}" class="text-decoration-none">Mantenimientos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Crear</li>
+                </ol>
+            </nav>
         </div>
-    @endif
+        <a href="{{ route('mantenimientos.index') }}" class="btn btn-outline-secondary btn-sm px-3 d-inline-flex align-items-center gap-1.5 shadow-sm">
+            <i class="fas fa-arrow-left"></i>
+            <span class="d-none d-sm-inline">Volver a la Lista</span>
+        </a>
+    </div>
 
-    <form method="POST" action="{{ route('mantenimientos.store') }}">
-        @csrf
-
-        <div class="mb-3">
-            <label for="descripcion" class="form-label">Descripción</label>
-            <input type="text" name="descripcion" class="form-control" value="{{ old('descripcion') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Estado</label><br>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="estado" value="1" {{ old('estado', '1') == '1' ? 'checked' : '' }}>
-                <label class="form-check-label">Activo</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="estado" value="0" {{ old('estado') == '0' ? 'checked' : '' }}>
-                <label class="form-check-label">Inactivo</label>
+    <!-- Card Principal del Formulario -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3 border-bottom border-light">
+            <div class="d-flex align-items-center gap-2 text-secondary fw-semibold">
+                <i class="fas fa-plus-circle text-success"></i>
+                <span>Nueva Orden de Trabajo y Mantenimiento</span>
             </div>
         </div>
+        <div class="card-body p-4 p-md-5">
+            <!-- Alertas de Errores de Validación -->
+            @if ($errors->any())
+            <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-start gap-3" role="alert">
+                <i class="fas fa-exclamation-circle text-danger mt-1 fs-5"></i>
+                <div>
+                    <span class="fw-bold d-block mb-1">Por favor corrige los siguientes errores:</span>
+                    <ul class="mb-0 ps-3">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            @endif
 
-        <div class="mb-3">
-            <label for="fecha_hora" class="form-label">Fecha y Hora</label>
-            <input type="datetime-local" name="fecha_hora" class="form-control" value="{{ old('fecha_hora') }}" required>
+            <form method="POST" action="{{ route('mantenimientos.store') }}">
+                @csrf
+                
+                <h6 class="text-primary fw-semibold mb-3 pb-2 border-bottom border-light">
+                    <i class="fas fa-info-circle me-2"></i>Detalles Principales
+                </h6>
+                
+                <div class="row g-3 mb-4">
+                    <!-- Descripción -->
+                    <div class="col-12 col-md-8">
+                        <label for="descripcion" class="form-label fw-medium text-secondary">Descripción del Trabajo <span class="text-danger">*</span></label>
+                        <input type="text" name="descripcion" id="descripcion" class="form-control px-3"
+                               value="{{ old('descripcion') }}" required placeholder="Ej: Mantenimiento preventivo de ascensores bloque B">
+                    </div>
+
+                    <!-- Estado Inicial -->
+                    <div class="col-12 col-md-4">
+                        <label class="form-label fw-medium text-secondary d-block mb-2">Estado Inicial</label>
+                        <div class="pt-1.5">
+                            <div class="form-check form-check-inline me-3">
+                                <input class="form-check-input accent-success" type="radio" name="estado" id="estado_activo" value="1"
+                                       {{ old('estado', '1') == '1' ? 'checked' : '' }}>
+                                <label class="form-check-label fw-medium text-dark" for="estado_activo">🟢 Activo</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input accent-danger" type="radio" name="estado" id="estado_inactivo" value="0"
+                                       {{ old('estado') == '0' ? 'checked' : '' }}>
+                                <label class="form-check-label fw-medium text-dark" for="estado_inactivo">🔴 Inactivo</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="text-primary fw-semibold mb-3 pb-2 border-bottom border-light">
+                    <i class="fas fa-dollar-sign me-2"></i>Planificación y Logística Financiera
+                </h6>
+
+                <div class="row g-3 mb-4">
+                    <!-- Fecha y Hora -->
+                    <div class="col-12 col-md-6">
+                        <label for="fecha_hora" class="form-label fw-medium text-secondary">Fecha y Hora Programada <span class="text-danger">*</span></label>
+                        <input type="datetime-local" name="fecha_hora" id="fecha_hora" class="form-control px-3"
+                               value="{{ old('fecha_hora') }}" required>
+                    </div>
+
+                    <!-- Monto -->
+                    <div class="col-12 col-md-6">
+                        <label for="monto" class="form-label fw-medium text-secondary">Monto Estructurado <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted">Bs</span>
+                            <input type="number" step="0.01" name="monto" id="monto" class="form-control px-2 fw-semibold text-dark"
+                                   value="{{ old('monto') }}" required placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <!-- Asignación de Gestor (Usuario) -->
+                    <div class="col-12 col-md-6">
+                        <label for="usuario_id" class="form-label fw-medium text-secondary">Usuario Asignado / Supervisor <span class="text-danger">*</span></label>
+                        <select name="usuario_id" id="usuario_id" class="form-select px-3" required>
+                            <option value="">-- Seleccionar Usuario --</option>
+                            @foreach ($usuarios as $usuario)
+                                <option value="{{ $usuario->id }}" {{ old('usuario_id') == $usuario->id ? 'selected' : '' }}>
+                                    {{ $usuario->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Asignación de Empresa Externa -->
+                    <div class="col-12 col-md-6">
+                        <label for="empresaExterna_id" class="form-label fw-medium text-secondary">Empresa Ejecutante (Opcional)</label>
+                        <select name="empresaExterna_id" id="empresaExterna_id" class="form-select px-3">
+                            <option value="">-- Ninguna (Mantenimiento Interno) --</option>
+                             @foreach($empresas as $empresa)
+                                <option value="{{ $empresa->id }}" {{ old('empresaExterna_id') == $empresa->id ? 'selected' : '' }}>
+                                    {{ $empresa->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción Formulario -->
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border-light">
+                    <a href="{{ route('mantenimientos.index') }}" class="btn btn-light border px-4">Cancelar</a>
+                    <button type="submit" class="btn btn-success px-4 shadow-sm fw-medium">
+                        <i class="fas fa-save me-1.5"></i>Guardar Mantenimiento
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div class="mb-3">
-            <label for="monto" class="form-label">Monto</label>
-            <input type="number" step="0.01" name="monto" class="form-control" value="{{ old('monto') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="usuario_id" class="form-label">Usuario</label>
-            <select name="usuario_id" class="form-select" required>
-                <option value="">-- Seleccionar Usuario --</option>
-                @foreach ($usuarios as $usuario)
-                    <option value="{{ $usuario->id }}" {{ old('usuario_id') == $usuario->id ? 'selected' : '' }}>
-                        {{ $usuario->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="empresa_id" class="form-label">Empresa (opcional)</label>
-            <select name="empresaExterna_id" class="form-select">
-                <option value="">-- Ninguna --</option>
-                 @foreach($empresas  as $empresa)
-                    <option value="{{ $empresa->id }}" {{ old('empresaExterna_id') == $empresa->id ? 'selected' : '' }}>
-                        {{ $empresa->nombre }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-success">Registrar</button>
-        <a href="{{ route('mantenimientos.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
 @endsection

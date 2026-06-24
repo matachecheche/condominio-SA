@@ -7,102 +7,136 @@
 @endpush
 
 @section('content')
+<!-- SweetAlert2 Toast para mensajes de éxito -->
 @if (session('success'))
     <script>
-        let message = "{{ session('success') }}"
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 1500,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-        Toast.fire({
-            icon: "success",
-            title: message
+        document.addEventListener('DOMContentLoaded', function() {
+            let message = "{{ session('success') }}";
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: message
+            });
         });
     </script>
 @endif
 
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Tipos de Cuotas</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('panel') }}">Inicio</a></li>
-        <li class="breadcrumb-item active">Tipos de Cuotas</li>
-    </ol>
-
- 
-    <div class="mb-4">
-        <a href="{{ route('tipos-cuotas.create') }}"><button type="button" class="btn btn-primary btn-sm">Nuevo Tipo de Cuota</button></a>
-    </div>
-  
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-table me-1"></i>
-            Tabla Tipos de Cuotas
+<div class="container-fluid px-4 py-4">
+    <!-- Encabezado y Navegación -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-2">
+        <div>
+            <h2 class="fw-bold text-dark mb-1 fs-2">Tipos de Cuotas</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="{{ route('panel') }}" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tipos de Cuotas</li>
+                </ol>
+            </nav>
         </div>
-        <div class="card-body table-responsive">
-            <table id="datatablesSimple" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Frecuencia</th>
-                        <th>Editable</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($tipos as $tipo)
-                    <tr>
-                        <td>{{ $tipo->id }}</td>
-                        <td>{{ $tipo->nombre }}</td>
-                        <td>{{ ucfirst($tipo->frecuencia) }}</td>
-                        <td>{{ $tipo->editable ? 'Sí' : 'No' }}</td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                
-                                <a href="{{ route('tipos-cuotas.edit', $tipo->id) }}" class="btn btn-warning btn-sm">Editar</a>
-                              
-                                 
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminarTipo-{{ $tipo->id }}">Eliminar</button>
-                               
-                            </div>
-                        </td>
-                    </tr>
 
-                    
-                    <!-- Modal -->
-                    <div class="modal fade" id="confirmarEliminarTipo-{{ $tipo->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmarEliminarTipoLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Eliminar Tipo de Cuota</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div>
+            <a href="{{ route('tipos-cuotas.create') }}" class="btn btn-primary px-3 shadow-sm d-inline-flex align-items-center gap-2">
+                <i class="fas fa-plus-circle"></i>
+                <span>Nuevo Tipo de Cuota</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal de la Tabla -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3 border-bottom border-light">
+            <div class="d-flex align-items-center gap-2 text-secondary fw-semibold">
+                <i class="fas fa-tags text-primary"></i>
+                <span>Configuraciones y Frecuencias de Pago</span>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="datatablesSimple" class="table table-hover align-middle mb-0 px-3">
+                    <thead class="table-light text-uppercase fs-7 text-secondary">
+                        <tr>
+                            <th class="py-3 px-4" style="width: 70px;">ID</th>
+                            <th class="py-3">Nombre del Tipo</th>
+                            <th class="py-3">Frecuencia</th>
+                            <th class="py-3" style="width: 140px;">Parámetro Editable</th>
+                            <th class="py-3 text-end px-4" style="width: 200px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($tipos as $tipo)
+                        <tr>
+                            <td class="py-3 px-4 fw-semibold text-secondary">#{{ $tipo->id }}</td>
+                            <td class="py-3 fw-bold text-dark">{{ $tipo->nombre }}</td>
+                            <td class="py-3 text-muted text-capitalize">
+                                <i class="far fa-clock me-1 text-secondary opacity-75"></i>{{ ucfirst($tipo->frecuencia) }}
+                            </td>
+                            <td class="py-3">
+                                @if($tipo->editable)
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill fw-medium fs-7">
+                                        <i class="fas fa-check-circle me-1"></i>Permitido
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill fw-medium fs-7">
+                                        <i class="fas fa-lock me-1"></i>Bloqueado
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="py-3 text-end px-4">
+                                <div class="d-inline-flex gap-2 justify-content-end">
+                                    <a href="{{ route('tipos-cuotas.edit', $tipo->id) }}" class="btn btn-outline-warning btn-sm px-2.5 d-inline-flex align-items-center gap-1 text-dark" title="Editar tipo">
+                                        <i class="fas fa-edit"></i>
+                                        <span class="d-none d-sm-inline">Editar</span>
+                                    </a>
+                                  
+                                    <button type="button" class="btn btn-outline-danger btn-sm px-2.5 d-inline-flex align-items-center gap-1" 
+                                            data-bs-toggle="modal" data-bs-target="#confirmarEliminarTipo-{{ $tipo->id }}" title="Eliminar tipo">
+                                        <i class="fas fa-trash-alt"></i>
+                                        <span class="d-none d-sm-inline">Eliminar</span>
+                                    </button>
                                 </div>
-                                <div class="modal-body">
-                                    ¿Desea eliminar el tipo de cuota: {{ $tipo->nombre }}?
-                                </div>
-                                <div class="modal-footer">
-                                    <form action="{{ route('tipos-cuotas.destroy', $tipo->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-primary btn-sm">Aceptar</button>
-                                    </form>
-                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                            </td>
+                        </tr>
+
+                        <!-- Modal de Confirmación Estilizado -->
+                        <div class="modal fade" id="confirmarEliminarTipo-{{ $tipo->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg rounded-3">
+                                    <div class="modal-header border-bottom border-light py-3">
+                                        <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+                                            <i class="fas fa-exclamation-triangle text-danger"></i> Confirmar Eliminación
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body py-4 text-start">
+                                        <p class="mb-1 text-dark">¿Está seguro de que desea eliminar permanentemente este tipo de cuota?</p>
+                                        <span class="text-muted small">Nombre: <strong class="text-danger">{{ $tipo->nombre }}</strong></span>
+                                    </div>
+                                    <div class="modal-footer border-top border-light py-2">
+                                        <button type="button" class="btn btn-light border px-3 btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                                        <form action="{{ route('tipos-cuotas.destroy', $tipo->id) }}" method="POST" class="m-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger px-3 fw-medium btn-sm">Eliminar Registro</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                   
-                    @endforeach
-                </tbody>
-            </table>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -110,5 +144,19 @@
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-<script src="{{ asset('js/datatables-simple-demo.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', event => {
+        const datatablesSimple = document.getElementById('datatablesSimple');
+        if (datatablesSimple) {
+            new simpleDatatables.DataTable(datatablesSimple, {
+                labels: {
+                    placeholder: "Buscar...",
+                    perPage: "registros por página",
+                    noRows: "No se encontraron registros",
+                    info: "Mostrando {start} a {end} de {rows} registros",
+                }
+            });
+        }
+    });
+</script>
 @endpush

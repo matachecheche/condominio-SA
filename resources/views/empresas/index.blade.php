@@ -7,129 +7,118 @@
 @endpush
 
 @section('content')
-@if (session('success'))
-    <script>
-        let message = "{{ session('success') }}"
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 1500,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-        Toast.fire({
-            icon: "success",
-            title: message
-        });
-    </script>
-@endif
-
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Empresas Externas</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('panel') }}">Inicio</a></li>
-        <li class="breadcrumb-item active">Empresas</li>
-    </ol>
-
-    @can('crear empresas')
-    <div class="mb-4">
-        <a href="{{ route('empresas.create') }}"><button type="button" class="btn btn-primary btn-sm">Registrar Nueva Empresa</button></a>
-    </div>
-    @endcan
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-table me-1"></i>
-            Tabla de Empresas Externas
+<div class="container-fluid px-4 py-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1 fs-2">Empresas Externas</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="{{ route('panel') }}" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item active">Empresas</li>
+                </ol>
+            </nav>
         </div>
-        <div class="card-body table-responsive">
-            <form method="GET" action="{{ route('empresas.index') }}" class="mb-3">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-6">
-                        <label class="form-label">Buscar por nombre o servicio</label>
-                        <input type="text" name="search" class="form-control" placeholder="Ej: Jardinería, Seguridad" value="{{ request('search') }}">
-                    </div>
-                    <div class="col-md-2 d-grid">
-                        <button class="btn btn-outline-primary" type="submit">Filtrar</button>
-                    </div>
+        @can('crear empresas')
+            <a href="{{ route('empresas.create') }}" class="btn btn-primary shadow-sm px-3 d-inline-flex align-items-center gap-2">
+                <i class="fas fa-plus-circle"></i> Nueva Empresa
+            </a>
+        @endcan
+    </div>
+
+    <!-- Barra de Búsqueda -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-3 bg-light rounded-3">
+            <form method="GET" action="{{ route('empresas.index') }}" class="m-0">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Buscar por nombre o servicio..." value="{{ request('search') }}">
+                    <button class="btn btn-primary px-4 shadow-sm" type="submit">Buscar</button>
+                    @if(request('search'))
+                        <a href="{{ route('empresas.index') }}" class="btn btn-outline-secondary"><i class="fas fa-times"></i></a>
+                    @endif
                 </div>
             </form>
+        </div>
+    </div>
 
-            <table id="datatablesSimple" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Servicio</th>
-                        <th>Teléfono</th>
-                        <th>Correo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($empresas as $empresa)
-                    <tr>
-                        <td>{{ $empresa->id }}</td>
-                        <td>{{ $empresa->nombre }}</td>
-                        <td>{{ $empresa->servicio }}</td>
-                        <td>{{ $empresa->telefono }}</td>
-                        <td>{{ $empresa->correo }}</td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                @can('ver empresas')
-                                <a href="{{ route('empresas.show', $empresa->id) }}" class="btn btn-info btn-sm">Ver</a>
-                                @endcan
-                                @can('editar empresas')
-                                <a href="{{ route('empresas.edit', $empresa->id) }}" class="btn btn-warning btn-sm">Editar</a>
-                                @endcan
-                                @can('eliminar empresas')
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarEliminarEmpresa-{{ $empresa->id }}">Eliminar</button>
-                                @endcan
-                            </div>
-                        </td>
-                    </tr>
-
-                    @can('eliminar empresas')
-                    <!-- Modal -->
-                    <div class="modal fade" id="confirmarEliminarEmpresa-{{ $empresa->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmarEliminarEmpresaLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Eliminar Empresa</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Tabla -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-uppercase fs-7 text-secondary">
+                        <tr>
+                            <th class="py-3 px-4">ID</th>
+                            <th class="py-3">Nombre</th>
+                            <th class="py-3">Servicio</th>
+                            <th class="py-3">Contacto</th>
+                            <th class="py-3 text-end px-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($empresas as $empresa)
+                        <tr>
+                            <td class="py-3 px-4 text-secondary fw-semibold">#{{ $empresa->id }}</td>
+                            <td class="py-3 fw-bold text-dark">{{ $empresa->nombre }}</td>
+                            <td class="py-3 text-secondary">{{ $empresa->servicio }}</td>
+                            <td class="py-3 fs-7">
+                                <div class="text-dark"><i class="fas fa-phone-alt me-1 text-muted"></i>{{ $empresa->telefono }}</div>
+                                <div class="text-muted"><i class="fas fa-envelope me-1"></i>{{ $empresa->correo }}</div>
+                            </td>
+                            <td class="py-3 text-end px-4">
+                                <div class="d-inline-flex gap-1">
+                                    @can('ver empresas')
+                                        <a href="{{ route('empresas.show', $empresa->id) }}" class="btn btn-outline-info btn-sm" title="Ver"><i class="fas fa-eye"></i></a>
+                                    @endcan
+                                    @can('editar empresas')
+                                        <a href="{{ route('empresas.edit', $empresa->id) }}" class="btn btn-outline-warning btn-sm text-dark" title="Editar"><i class="fas fa-edit"></i></a>
+                                    @endcan
+                                    @can('eliminar empresas')
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmarEliminar({{ $empresa->id }}, '{{ $empresa->nombre }}')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $empresa->id }}" action="{{ route('empresas.destroy', $empresa->id) }}" method="POST" class="d-none">
+                                            @csrf @method('DELETE')
+                                        </form>
+                                    @endcan
                                 </div>
-                                <div class="modal-body">
-                                    ¿Desea eliminar la empresa: {{ $empresa->nombre }}?
-                                </div>
-                                <div class="modal-footer">
-                                    <form action="{{ route('empresas.destroy', $empresa->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-primary btn-sm">Aceptar</button>
-                                    </form>
-                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endcan
-                    @endforeach
-                </tbody>
-            </table>
-
-            <div class="d-flex justify-content-center mt-3">
-                {{ $empresas->appends(request()->query())->links() }}
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="5" class="text-center py-5 text-muted">No se encontraron empresas registradas.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
+        </div>
+        <div class="card-footer bg-white border-top border-light py-3 d-flex justify-content-center">
+            {{ $empresas->appends(request()->query())->links() }}
         </div>
     </div>
 </div>
-@endsection
 
-@push('js')
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-<script src="{{ asset('js/datatables-simple-demo.js') }}"></script>
-@endpush
+<script>
+    // SweetAlert para éxito
+    @if (session('success'))
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: "{{ session('success') }}", showConfirmButton: false, timer: 2000 });
+    @endif
+
+    // Función de eliminación profesional
+    function confirmarEliminar(id, nombre) {
+        Swal.fire({
+            title: '¿Eliminar empresa?',
+            text: `¿Estás seguro de eliminar a ${nombre}? Esta acción no se puede revertir.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        });
+    }
+</script>
+@endsection

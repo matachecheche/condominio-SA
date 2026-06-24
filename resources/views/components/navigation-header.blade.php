@@ -1,19 +1,16 @@
+<nav class="sb-topnav navbar navbar-expand navbar-dark shadow-sm border-bottom" 
+     style="background: #090d16; border-color: rgba(255, 255, 255, 0.05) !important;">
 
-<nav class="sb-topnav navbar navbar-expand navbar-dark bg-black shadow">
-
-    <!-- BOTÓN SIDEBAR -->
-    <button class="btn btn-link btn-sm ms-3 me-2 text-white" id="sidebarToggle" title="Abrir menú">
+    <button class="btn btn-link btn-sm ms-3 me-2" id="sidebarToggle" title="Abrir menú" style="color: #94a3b8;">
         <i class="fas fa-bars fs-5"></i>
     </button>
 
-    <!-- LOGO -->
-    <a class="navbar-brand fw-bold text-uppercase" href="{{ route('panel') }}">
+    <a class="navbar-brand fw-bold text-uppercase fs-6 tracking-wider text-white" href="{{ route('panel') }}">
         🏡 Condominio San Diego
     </a>
 
-    <!-- BUSCADOR (OCULTO) -->
-    <form class="d-none d-md-inline-block form-inline ms-auto me-3 my-2">
-        <div class="input-group" hidden>
+    <form class="d-none d-md-inline-block form-inline ms-auto me-3 my-2" hidden>
+        <div class="input-group">
             <input class="form-control bg-dark text-white border-secondary" type="text" placeholder="Buscar..." />
             <button class="btn btn-outline-light" type="button">
                 <i class="fas fa-search"></i>
@@ -21,44 +18,53 @@
         </div>
     </form>
 
-    <!-- USUARIO -->
     <ul class="navbar-nav ms-auto me-3 me-lg-4">
         <li class="nav-item dropdown">
 
-            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" id="navbarDropdown"
-               href="#" role="button" data-bs-toggle="dropdown">
-
-                <i class="fas fa-user-circle fs-5"></i>
-                <span class="d-none d-md-inline fw-semibold">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 px-3 py-1 rounded-pill" 
+               id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" 
+               style="color: #cbd5e1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                
+                <i class="fas fa-user-circle fs-5" style="color: #38bdf8;"></i>
+                <span class="d-none d-md-inline fw-medium small">
                     {{ Auth::user()->name ?? 'Usuario' }}
                 </span>
             </a>
 
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 py-2" 
+                style="background: #111827; min-width: 180px; border: 1px solid rgba(255,255,255,0.08) !important;">
 
                 <li>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-user me-2"></i> Perfil
+                    <a class="dropdown-item py-2 small text-secondary d-flex align-items-center" href="#" 
+                       onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#f1f5f9';" 
+                       onmouseout="this.style.background='transparent'; this.style.color='#94a3b8';" style="color: #94a3b8;">
+                        <i class="fas fa-user me-2 text-muted" style="width: 16px;"></i> Perfil
                     </a>
                 </li>
 
                 <li>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-cog me-2"></i> Configuración
+                    <a class="dropdown-item py-2 small text-secondary d-flex align-items-center" href="#" 
+                       onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#f1f5f9';" 
+                       onmouseout="this.style.background='transparent'; this.style.color='#94a3b8';" style="color: #94a3b8;">
+                        <i class="fas fa-cog me-2 text-muted" style="width: 16px;"></i> Configuración
                     </a>
                 </li>
 
                 <li>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-list me-2"></i> Actividad
+                    <a class="dropdown-item py-2 small text-secondary d-flex align-items-center" href="{{ route('bitacora.index') }}" 
+                       onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#f1f5f9';" 
+                       onmouseout="this.style.background='transparent'; this.style.color='#94a3b8';" style="color: #94a3b8;">
+                        <i class="fas fa-list me-2 text-muted" style="width: 16px;"></i> Actividad
                     </a>
                 </li>
 
-                <li><hr class="dropdown-divider" /></li>
+                <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.08);" /></li>
 
                 <li>
-                    <a class="dropdown-item text-danger" href="{{ route('logout') }}">
-                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar sesión
+                    <a class="dropdown-item py-2 small d-flex align-items-center" href="{{ route('logout') }}" 
+                       onmouseover="this.style.background='rgba(248,113,113,0.1)';" 
+                       onmouseout="this.style.background='transparent';" style="color: #f87171;">
+                        <i class="fas fa-sign-out-alt me-2" style="width: 16px;"></i> Cerrar sesión
                     </a>
                 </li>
 
@@ -67,4 +73,3 @@
     </ul>
 
 </nav>
-

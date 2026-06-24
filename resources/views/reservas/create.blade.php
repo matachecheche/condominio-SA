@@ -1,71 +1,128 @@
-@extends('layouts.ap')
+@extends('plantilla')
+
+@section('title', 'Agendar Reserva')
 
 @section('content')
-<div class="container">
-    <h2 class="mb-4">Agendar Reserva</h2>
-
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <strong>Ups!</strong> Hay errores en el formulario.<br><br>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+<div class="container-fluid px-4 py-4">
+    <!-- Encabezado y Navegación -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1 fs-3">Agendar Reserva</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a href="{{ route('panel') }}" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('reservas.index') }}" class="text-decoration-none">Reservas</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Agendar</li>
+                </ol>
+            </nav>
+        </div>
+        <a href="{{ route('reservas.index') }}" class="btn btn-outline-secondary btn-sm px-3 d-inline-flex align-items-center gap-1.5 shadow-sm">
+            <i class="fas fa-arrow-left"></i>
+            <span class="d-none d-sm-inline">Volver a Reservas</span>
+        </a>
     </div>
-    @endif
 
-    <form action="{{ route('reservas.store') }}" method="POST">
-        @csrf
-
-        <div class="mb-3">
-            <label for="area_comun_id" class="form-label">Área Común</label>
-            <select name="area_comun_id" id="area_comun_id" class="form-select" required>
-                <option value="">-- Selecciona un área común --</option>
-                @foreach ($areasComunes as $area)
-                    <option value="{{ $area->id }}" data-monto="{{ $area->monto }}" {{ old('area_comun_id') == $area->id ? 'selected' : '' }}>
-                        {{ $area->nombre }}
-                    </option>
-                @endforeach
-            </select>
+    <!-- Card Principal del Formulario -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3 border-bottom border-light">
+            <div class="d-flex align-items-center gap-2 text-secondary fw-semibold">
+                <i class="fas fa-calendar-plus text-primary"></i>
+                <span>Formulario de Solicitud de Espacio Común</span>
+            </div>
         </div>
+        <div class="card-body p-4 p-md-5">
+            <!-- Alertas de Errores de Validación -->
+            @if ($errors->any())
+            <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-start gap-3" role="alert">
+                <i class="fas fa-exclamation-circle text-danger mt-1 fs-5"></i>
+                <div>
+                    <span class="fw-bold d-block mb-1">Por favor corrige los siguientes errores:</span>
+                    <ul class="mb-0 ps-3">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            @endif
 
-        <div class="mb-3">
-            <label for="fecha" class="form-label">Fecha</label>
-            <input type="date" name="fecha" id="fecha" class="form-control" value="{{ old('fecha') }}" required
-                min="{{ date('Y-m-d') }}">
+            <form action="{{ route('reservas.store') }}" method="POST">
+                @csrf
+                
+                <h6 class="text-primary fw-semibold mb-3 pb-2 border-bottom border-light">
+                    <i class="fas fa-clock me-2"></i>Asignación de Espacio y Tiempo
+                </h6>
+                
+                <div class="row g-3 mb-4">
+                    <!-- Selección de Área Común -->
+                    <div class="col-12 col-md-6">
+                        <label for="area_comun_id" class="form-label fw-medium text-secondary">Área Común <span class="text-danger">*</span></label>
+                        <select name="area_comun_id" id="area_comun_id" class="form-select px-3" required>
+                            <option value="">-- Selecciona un área común --</option>
+                            @foreach ($areasComunes as $area)
+                                <option value="{{ $area->id }}" data-monto="{{ $area->monto }}" {{ old('area_comun_id') == $area->id ? 'selected' : '' }}>
+                                    {{ $area->nombre }} (Bs {{ number_format($area->monto, 2) }}/HR)
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <!-- Selección de Fecha -->
+                    <div class="col-12 col-md-6">
+                        <label for="fecha" class="form-label fw-medium text-secondary">Fecha de Reserva <span class="text-danger">*</span></label>
+                        <input type="date" name="fecha" id="fecha" class="form-control px-3" value="{{ old('fecha') }}" required min="{{ date('Y-m-d') }}">
+                    </div>
+
+                    <!-- Hora de Inicio -->
+                    <div class="col-12 col-sm-6 col-md-4">
+                        <label for="hora_inicio" class="form-label fw-medium text-secondary">Hora Inicio <span class="text-danger">*</span></label>
+                        <select name="hora_inicio" id="hora_inicio" class="form-select px-3" required>
+                            <option value="">-- Selecciona hora inicio --</option>
+                        </select>
+                    </div>
+
+                    <!-- Hora de Finalización -->
+                    <div class="col-12 col-sm-6 col-md-4">
+                        <label for="hora_fin" class="form-label fw-medium text-secondary">Hora Fin <span class="text-danger">*</span></label>
+                        <select name="hora_fin" id="hora_fin" class="form-select px-3" required>
+                            <option value="">-- Selecciona hora fin --</option>
+                        </select>
+                    </div>
+
+                    <!-- Monto Total Calculado Estilizado -->
+                    <div class="col-12 col-md-4">
+                        <label class="form-label fw-medium text-secondary">Monto Total Estimado</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted">Bs</span>
+                            <input type="text" id="monto_total" class="form-control px-2 fw-bold text-dark bg-light" readonly value="0.00">
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="text-primary fw-semibold mb-3 pb-2 border-bottom border-light">
+                    <i class="fas fa-comment-alt me-2"></i>Detalles Adicionales
+                </h6>
+
+                <!-- Campo de Observaciones -->
+                <div class="mb-4">
+                    <label for="observacion" class="form-label fw-medium text-secondary">Observación / Notas Especiales</label>
+                    <textarea name="observacion" id="observacion" class="form-control px-3 py-2" rows="3" placeholder="Indique detalles adicionales de su evento o requerimientos específicos..."></textarea>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border-light">
+                    <a href="{{ route('reservas.index') }}" class="btn btn-light border px-4">Cancelar</a>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm fw-medium">
+                        <i class="fas fa-save me-1.5"></i>Guardar Reserva
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div class="mb-3">
-            <label for="hora_inicio" class="form-label">Hora Inicio</label>
-            <select name="hora_inicio" id="hora_inicio" class="form-select" required>
-                <option value="">-- Selecciona hora inicio --</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="hora_fin" class="form-label">Hora Fin</label>
-            <select name="hora_fin" id="hora_fin" class="form-select" required>
-                <option value="">-- Selecciona hora fin --</option>
-            </select>
-        </div>
-
-        <!-- Cuadro para mostrar monto total -->
-        <div class="mb-3">
-            <label class="form-label">Monto Total (Bs.)</label>
-            <input type="text" id="monto_total" class="form-control" readonly value="0.00">
-        </div>
-
-        <div class="mb-3">
-            <label for="observacion" class="form-label">Observación</label>
-            <textarea name="observacion" id="observacion" class="form-control">{{ old('observacion') }}</textarea>
-        </div>
-
-        <button type="submit" class="btn btn-success">Guardar Reserva</button>
-        <a href="{{ route('reservas.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
+@endsection
 
+@push('js')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const areaSelect = document.getElementById('area_comun_id');
@@ -149,4 +206,4 @@ document.addEventListener('DOMContentLoaded', function() {
   horaFinSelect.addEventListener('change', calcularMontoTotal);
 });
 </script>
-@endsection
+@endpush

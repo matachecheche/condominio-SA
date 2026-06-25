@@ -27,13 +27,26 @@
             .sidebar-logo-text { font-size: 13px; font-weight: 500; color: #e2e8f0; }
             .sidebar-logo-sub  { font-size: 11px; color: #475569; margin-top: 1px; }
 
+            /* CORRECCIÓN DE ESPACIOS SUPERIORES */
             .sb-sidenav-menu {
                 flex: 1;
                 overflow-y: auto;
-                padding: 8px 0 16px;
+                padding: 0px 0 16px !important; /* Eliminado el padding superior por completo */
                 scrollbar-width: thin;
                 scrollbar-color: #1e293b transparent;
             }
+            .sb-sidenav-menu > .nav {
+                margin-top: 0 !important;
+                padding-top: 0 !important; /* Resetea cualquier holgura heredada de Bootstrap */
+            }
+            
+            /* Primera cabecera del sistema específica */
+            .sb-sidenav-menu-heading.first-heading {
+                padding-top: 14px !important; /* Espaciado limpio respecto al logo */
+                padding-bottom: 4px !important;
+                margin-top: 0 !important;
+            }
+
             .sb-sidenav-menu::-webkit-scrollbar { width: 3px; }
             .sb-sidenav-menu::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 99px; }
 
@@ -157,8 +170,8 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
 
-                {{-- SISTEMA --}}
-                <div class="sb-sidenav-menu-heading">Sistema</div>
+                {{-- SISTEMA (Clase modificada para corregir dimensiones) --}}
+                <div class="sb-sidenav-menu-heading first-heading">Sistema</div>
                 <a class="nav-link" href="{{ route('panel') }}">
                     <div class="nav-icon-box sky"><i class="fas fa-tachometer-alt"></i></div>
                     <span class="nav-label">Panel de Control</span>
@@ -246,6 +259,7 @@
                         <a class="nav-link" href="{{ route('cuotas.index') }}"><i class="fas fa-list"></i> Cuotas</a>
                         <a class="nav-link" href="{{ route('tipos-cuotas.index') }}"><i class="fas fa-tags"></i> Tipos de Cuota</a>
                         <a class="nav-link" href="{{ route('pagos.index') }}"><i class="fas fa-money-bill"></i> Pagos</a>
+                        <a class="nav-link" href="{{ route('pagos.index') }}"><i class="fas fa-receipt"></i> Listado de Pagos</a>
                         <a class="nav-link" href="{{ route('multas.index') }}"><i class="fas fa-exclamation-triangle"></i> Multas</a>
                     </nav>
                 </div>
